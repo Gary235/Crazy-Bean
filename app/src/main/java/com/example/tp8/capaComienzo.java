@@ -8,6 +8,7 @@ import org.cocos2d.actions.interval.IntervalAction;
 import org.cocos2d.actions.interval.MoveBy;
 import org.cocos2d.actions.interval.Sequence;
 import org.cocos2d.layers.Layer;
+import org.cocos2d.nodes.Director;
 import org.cocos2d.nodes.Label;
 import org.cocos2d.nodes.Sprite;
 import org.cocos2d.types.CCColor3B;
@@ -25,7 +26,6 @@ public class capaComienzo extends Layer {
 
         this._Pantalla = pantalla;
 
-
         ponerTitulo();
         ponerBotonInicio();
         super.schedule("VerificarBoton", 0.5f);
@@ -35,6 +35,9 @@ public class capaComienzo extends Layer {
         if(apretado){
             //cambiar de escena
             Log.d("Juego", "Apretoooooo");
+
+
+
         }
 
     }
@@ -70,7 +73,7 @@ public class capaComienzo extends Layer {
         CCColor3B color3B;
         color3B = new CCColor3B(255,255,255);
 
-        label  = Label.label("Crazy Bean", "montserrat", 250);
+        label  = Label.label("Crazy Bean", "montserrat_semibold.ttf", 150);
         label.setPosition(_Pantalla.getWidth()/2,_Pantalla.getHeight()/2);
         label.setColor(color3B);
 
