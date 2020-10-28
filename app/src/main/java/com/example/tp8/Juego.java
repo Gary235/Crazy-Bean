@@ -13,7 +13,7 @@ import org.cocos2d.types.CCSize;
 public class Juego {
 
     CCGLSurfaceView _Vista;
-    CCSize _Pantalla;
+    static CCSize _Pantalla;
 
     public Juego(CCGLSurfaceView _Vista) {
         this._Vista = _Vista;
@@ -25,22 +25,26 @@ public class Juego {
         _Pantalla = Director.sharedDirector().displaySize();
         _Vista.setBackgroundColor(Color.argb(1,255,255,255));
 
-        Scene escena;
-        escena = escenaComienzo();
-        Director.sharedDirector().runWithScene(escena);
-
+        escenaComienzo();
     }
-    private Scene escenaComienzo() {
+    public void escenaComienzo() {
 
         Scene escena = Scene.node();
         capaComienzo capaComienzo = new capaComienzo(_Pantalla);
 
-
-
         escena.addChild(capaComienzo);
-        return escena;
+        Director.sharedDirector().runWithScene(escena);
     }
 
+
+    public static void escenaJuego() {
+
+        Scene escena = Scene.node();
+        capaJuego capaJuego = new capaJuego(_Pantalla);
+
+        escena.addChild(capaJuego);
+        Director.sharedDirector().replaceScene(escena);
+    }
 
 
 
