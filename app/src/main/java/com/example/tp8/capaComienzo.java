@@ -20,7 +20,6 @@ public class capaComienzo extends Layer {
     boolean apretado = false;
     Sprite sprBoton;
     Label label;
-    int cont = 0;
 
     public capaComienzo(CCSize pantalla) {
         setIsTouchEnabled(true);
@@ -33,12 +32,13 @@ public class capaComienzo extends Layer {
     }
 
     public void VerificarBoton(float floatInutil){
-        if(apretado && cont == 0){
+        if(apretado ){
             //cambiar de escena
             Log.d("Juego", "Apretoooooo");
-
             Juego.escenaJuego();
-            cont++;
+
+            unschedule("VerificarBoton");
+
         }
 
     }

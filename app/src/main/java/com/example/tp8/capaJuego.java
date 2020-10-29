@@ -3,6 +3,9 @@ package com.example.tp8;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.airbnb.lottie.LottieAnimationView;
+import com.example.tp8.R.raw;
+
 import org.cocos2d.layers.Layer;
 import org.cocos2d.nodes.Label;
 import org.cocos2d.nodes.Sprite;
@@ -11,6 +14,7 @@ import org.cocos2d.types.CCPoint;
 import org.cocos2d.types.CCSize;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class capaJuego extends Layer {
 
@@ -76,14 +80,10 @@ public class capaJuego extends Layer {
 
     }
     void PonerEnemigo(){
-        _Enemigo = Sprite.sprite("enemigo.png");
+        _Enemigo = Sprite.sprite("enemigo.json");
 
-        CCPoint posicionBoton = new CCPoint();
-        posicionBoton.x = _Pantalla.getWidth()/2;
-        posicionBoton.y = 600;
-
-        _Enemigo.setPosition(posicionBoton.x, posicionBoton.y);
-        Log.d("JuegoPos", "Enemigo: posX: " + posicionBoton.x + "   posY: " + posicionBoton.y);
+        _Enemigo.setPosition( _Pantalla.getWidth()/2, 600);
+        Log.d("JuegoPos", "Enemigo: posX: " + _Enemigo.getPositionX() + "   posY: " + _Enemigo.getPositionY());
 
         super.addChild(_Enemigo);
 
