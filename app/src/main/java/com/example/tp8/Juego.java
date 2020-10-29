@@ -1,6 +1,8 @@
 package com.example.tp8;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.util.Log;
 
 import org.cocos2d.layers.Layer;
@@ -12,20 +14,27 @@ import org.cocos2d.types.CCSize;
 
 public class Juego {
 
+    Context miContexto;
     CCGLSurfaceView _Vista;
     static CCSize _Pantalla;
+    static MediaPlayer MusicadeFondo;
 
-    public Juego(CCGLSurfaceView _Vista) {
+    public Juego(CCGLSurfaceView _Vista, Context context) {
         this._Vista = _Vista;
+        this.miContexto = context;
     }
 
     public void ComenzarJuego() {
         Log.d("Juego", "Empezo");
         Director.sharedDirector().attachInView(_Vista);
         _Pantalla = Director.sharedDirector().displaySize();
-        _Vista.setBackgroundColor(Color.argb(1,255,255,255));
+
+        MusicadeFondo = new MediaPlayer();
+        MusicadeFondo = MediaPlayer.create(miContexto, R.raw.nyan_cat);
+        MusicadeFondo.setLooping(true);
 
         escenaComienzo();
+
     }
     public void escenaComienzo() {
 

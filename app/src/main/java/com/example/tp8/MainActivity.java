@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Juego miJuego;
-        miJuego = new Juego(vista);
+        miJuego = new Juego(vista, this);
         miJuego.ComenzarJuego();
     }
 

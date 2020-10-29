@@ -10,14 +10,18 @@ import org.cocos2d.types.CCColor3B;
 import org.cocos2d.types.CCPoint;
 import org.cocos2d.types.CCSize;
 
+import java.io.IOException;
+
 public class capaJuego extends Layer {
 
     CCSize _Pantalla;
-    Sprite _Jugador;
+    Sprite _Jugador,_Enemigo;
     CCPoint _Click = new CCPoint();
     Label lblTimer, lblContadorDeMonedas;
     CCColor3B blanco;
-    int acum = 0;
+    int acumTimer = 0;
+
+    boolean comenzo = false;
 
     public capaJuego(CCSize _Pantalla) {
         this._Pantalla = _Pantalla;
@@ -25,24 +29,34 @@ public class capaJuego extends Layer {
         blanco = new CCColor3B(255,255,255);
 
 
-        setearPantalla();
-        super.schedule("actualizarTimer", 1);
+        PonerJugador();
+        PonerTimer();
+        PonerContadordeMonedas();
+        PonerEnemigo();
+        super.schedule("listenerJugador", 0.01f);
+
 
     }
 
+
+    public void listenerJugador(float nada){
+
+        if(comenzo){
+            comenzarJuego();
+            unschedule("listenerJugador");
+        }
+    }
     void PonerContadordeMonedas(){
         Sprite moneda = Sprite.sprite("moneda.png");
-        CCPoint posicionBoton = new CCPoint();
-        posicionBoton.x = 100;
-        posicionBoton.y = _Pantalla.getHeight() - (moneda.getHeight()/2 + 20);
-        _Jugador.setPosition(posicionBoton.x, posicionBoton.y);
-        Log.d("Juego", "posX: " + posicionBoton.x + "   posY: " + posicionBoton.y);
+        moneda.setPosition(50, _Pantalla.getHeight() - (moneda.getHeight()/2 + 20));
+        Log.d("JuegoPos", "MonedaCont : posX: " + moneda.getPositionX() + "   posY: " + moneda.getPositionY());
 
 
 
 
         lblContadorDeMonedas  = Label.label("0", "montserrat_semibold.ttf", 50);
-        lblContadorDeMonedas.setPosition(moneda.getPositionX() + 20,_Pantalla.getHeight() - (moneda.getHeight()/2 + 20));
+        lblContadorDeMonedas.setPosition(moneda.getPositionX() + 50,_Pantalla.getHeight() - (moneda.getHeight()/2 + 20));
+        Log.d("JuegoPos", "LBLcont : posX: " + lblContadorDeMonedas.getPositionX() + "   posY: " + lblContadorDeMonedas.getPositionY());
         lblContadorDeMonedas.setColor(blanco);
 
         super.addChild(moneda);
@@ -56,38 +70,55 @@ public class capaJuego extends Layer {
         posicionBoton.y = 200;
 
         _Jugador.setPosition(posicionBoton.x, posicionBoton.y);
-        Log.d("Juego", "posX: " + posicionBoton.x + "   posY: " + posicionBoton.y);
+        Log.d("JuegoPos", "Jugador: posX: " + posicionBoton.x + "   posY: " + posicionBoton.y);
 
         super.addChild(_Jugador);
+
+    }
+    void PonerEnemigo(){
+        _Enemigo = Sprite.sprite("enemigo.png");
+
+        CCPoint posicionBoton = new CCPoint();
+        posicionBoton.x = _Pantalla.getWidth()/2;
+        posicionBoton.y = 600;
+
+        _Enemigo.setPosition(posicionBoton.x, posicionBoton.y);
+        Log.d("JuegoPos", "Enemigo: posX: " + posicionBoton.x + "   posY: " + posicionBoton.y);
+
+        super.addChild(_Enemigo);
 
     }
 
     void PonerTimer(){
         lblTimer  = Label.label("0s", "montserrat_semibold.ttf", 50);
-        lblTimer.setPosition(_Pantalla.getWidth() - (lblTimer.getWidth()/2 + 20),_Pantalla.getHeight() - lblTimer.getHeight()/2);
+        lblTimer.setPosition(_Pantalla.getWidth() - (lblTimer.getWidth()/2 + 40),_Pantalla.getHeight() - 20);
+        Log.d("JuegoPos", "Timer: posX: " + lblTimer.getPositionX() + "   posY: " + lblTimer.getPositionY());
         lblTimer.setColor(blanco);
 
         super.addChild(lblTimer);
 
     }
     public void actualizarTimer(float inutilidad){
-        lblTimer.setString(acum + "s");
-        acum ++ ;
+        lblTimer.setString(acumTimer + "s");
+        acumTimer ++ ;
     }
+    void comenzarJuego(){
 
-    void setearPantalla(){
-        PonerJugador();
-        PonerTimer();
-        PonerContadordeMonedas();
+
+        try { Juego.MusicadeFondo.prepare(); } catch (IOException e) { e.printStackTrace(); }
+        Juego.MusicadeFondo.start();
+
+        super.schedule("actualizarTimer", 1);
+
+
     }
-
 
     void MoverJugador(float x, float y){
 
         _Jugador.setPosition(x, y);
 
     }
-    int DetectarClick(){
+    boolean DetectarClick(){
 
         float img1Derecha, img1Izquierda, img1Arriba, img1Abajo;
 
@@ -96,13 +127,8 @@ public class capaJuego extends Layer {
         img1Derecha = _Jugador.getPositionX() + _Jugador.getWidth()/2;
         img1Izquierda = _Jugador.getPositionX() - _Jugador.getWidth()/2;
 
-
-        if((_Click.x <= img1Derecha && _Click.x >= img1Izquierda) && (_Click.y <= img1Arriba && _Click.y >= img1Abajo))
-            return 1;
-
-        return  0;
+        return (_Click.x <= img1Derecha && _Click.x >= img1Izquierda) && (_Click.y <= img1Arriba && _Click.y >= img1Abajo);
     }
-
     @Override
     public boolean ccTouchesBegan(MotionEvent event) {
         float x,y;
@@ -112,9 +138,13 @@ public class capaJuego extends Layer {
         _Click.x = x;
         _Click.y = y;
 
+        if(DetectarClick()) {
+            comenzo = true;
+        }
+
+
         return true;
     }
-
     @Override
     public boolean ccTouchesMoved(MotionEvent event) {
         float x,y;
@@ -123,11 +153,13 @@ public class capaJuego extends Layer {
         Log.d("Juego", "X -- " + x + " -- Y -- " + y);
 
 
-        if(DetectarClick() == 1)
+        if(DetectarClick() ){
+            comenzo = true;
             MoverJugador(x,y);
-        else if(DetectarClick() == 0){
 
         }
+
+
         _Click.x = x;
         _Click.y = y;
 
