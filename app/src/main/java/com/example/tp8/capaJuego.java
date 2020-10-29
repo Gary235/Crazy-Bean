@@ -80,7 +80,7 @@ public class capaJuego extends Layer {
 
     }
     void PonerEnemigo(){
-        _Enemigo = Sprite.sprite("enemigo.json");
+        _Enemigo = Sprite.sprite("enemigo.png");
 
         _Enemigo.setPosition( _Pantalla.getWidth()/2, 600);
         Log.d("JuegoPos", "Enemigo: posX: " + _Enemigo.getPositionX() + "   posY: " + _Enemigo.getPositionY());
