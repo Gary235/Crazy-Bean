@@ -15,6 +15,7 @@ import org.cocos2d.types.CCSize;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class capaJuego extends Layer {
 
@@ -23,20 +24,20 @@ public class capaJuego extends Layer {
     CCPoint _Click = new CCPoint();
     Label lblTimer, lblContadorDeMonedas;
     CCColor3B blanco;
-    int acumTimer = 0;
+    int acumTimer = 0, contMoneda = 0;
+    Sprite moneda = Sprite.sprite("moneda.png");
 
-    boolean comenzo = false;
+    ArrayList<Sprite> arrEnemigos = new ArrayList<>();
+    boolean comenzo = false, tocoMoneda = false;
 
     public capaJuego(CCSize _Pantalla) {
         this._Pantalla = _Pantalla;
         setIsTouchEnabled(true);
         blanco = new CCColor3B(255,255,255);
 
-
         PonerJugador();
         PonerTimer();
         PonerContadordeMonedas();
-        PonerEnemigo();
         super.schedule("listenerJugador", 0.01f);
 
 
@@ -47,25 +48,108 @@ public class capaJuego extends Layer {
 
         if(comenzo){
             comenzarJuego();
+            super.schedule("PonerEnemigos", 3);
+            super.schedule("listenerMonedas", 0.1f);
+            super.schedule("listenerEnemigos", 0.1f);
+
+            //schedule listener enemigos
             unschedule("listenerJugador");
         }
     }
     void PonerContadordeMonedas(){
         Sprite moneda = Sprite.sprite("moneda.png");
-        moneda.setPosition(50, _Pantalla.getHeight() - (moneda.getHeight()/2 + 20));
+        moneda.setPosition(50, _Pantalla.getHeight() - 70);
         Log.d("JuegoPos", "MonedaCont : posX: " + moneda.getPositionX() + "   posY: " + moneda.getPositionY());
 
 
 
 
         lblContadorDeMonedas  = Label.label("0", "montserrat_semibold.ttf", 50);
-        lblContadorDeMonedas.setPosition(moneda.getPositionX() + 50,_Pantalla.getHeight() - (moneda.getHeight()/2 + 20));
+        lblContadorDeMonedas.setPosition(moneda.getPositionX() + 50,_Pantalla.getHeight() - 70);
         Log.d("JuegoPos", "LBLcont : posX: " + lblContadorDeMonedas.getPositionX() + "   posY: " + lblContadorDeMonedas.getPositionY());
         lblContadorDeMonedas.setColor(blanco);
 
         super.addChild(moneda);
         super.addChild(lblContadorDeMonedas);
     }
+    public void listenerMonedas(float inutil){
+
+
+        if(tocoMoneda || contMoneda == 0){
+            super.removeChild(moneda, true);
+            Random generadorDeAzar = new Random();
+            CCPoint posicionImagen = new CCPoint();
+
+            posicionImagen.x = generadorDeAzar.nextInt((int) (_Pantalla.width - moneda.getWidth()));
+            posicionImagen.x += moneda.getWidth() / 2;
+            posicionImagen.y = generadorDeAzar.nextInt((int) (_Pantalla.height - 70));
+            posicionImagen.y += moneda.getHeight() / 2;
+            moneda.setPosition(posicionImagen.x, posicionImagen.y);
+            super.addChild(moneda);
+            contMoneda ++;
+            lblContadorDeMonedas.setString(String.valueOf(contMoneda));
+            tocoMoneda = false;
+        }
+    }
+    boolean verificarTocoMoneda(){
+        float img1Derecha, img1Izquierda, img1Arriba, img1Abajo;
+        float img2Derecha, img2Izquierda, img2Arriba, img2Abajo;
+
+        img1Arriba = _Jugador.getPositionY() + _Jugador.getHeight()/2;
+        img1Abajo = _Jugador.getPositionY() - _Jugador.getHeight()/2;
+        img1Derecha = _Jugador.getPositionX() + _Jugador.getWidth()/2;
+        img1Izquierda = _Jugador.getPositionX() - _Jugador.getWidth()/2;
+
+        img2Arriba = moneda.getPositionY() + moneda.getHeight()/2;
+        img2Abajo = moneda.getPositionY() - moneda.getHeight()/2;
+        img2Derecha = moneda.getPositionX() + moneda.getWidth()/2;
+        img2Izquierda = moneda.getPositionX() - moneda.getWidth()/2;
+
+
+        if (img1Arriba>=img2Abajo && img1Arriba<=img2Arriba && img1Derecha >= img2Izquierda && img1Derecha <= img2Derecha) {
+            tocoMoneda = true;
+            Log.d("IntEntSprites", "Intersección caso 1");
+        }
+
+        if (img1Arriba >= img2Abajo && img1Arriba <= img2Arriba && img1Izquierda >= img2Izquierda && img1Izquierda <= img2Derecha) {
+            tocoMoneda = true;
+            Log.d("IntEntSprites", "Intersección caso 2");
+        }
+
+        if (img1Abajo >= img2Abajo && img1Abajo <= img2Arriba && img1Derecha >= img2Izquierda && img1Derecha <= img2Derecha) {
+            tocoMoneda = true;
+            Log.d("IntEntSprites", "Intersección caso 3");
+        }
+
+        if (img1Abajo >= img2Abajo && img1Abajo <= img2Arriba && img1Izquierda >= img2Izquierda && img1Izquierda <= img2Derecha) {
+            tocoMoneda = true;
+            Log.d("IntEntSprites", "Intersección caso 4");
+        }
+
+        if (img2Arriba >= img1Abajo && img2Arriba <= img1Arriba && img2Derecha >= img1Izquierda && img2Derecha <= img1Derecha) {
+            tocoMoneda = true;
+            Log.d("IntEntSprites", "Intersección caso 5");
+        }
+
+        if (img2Arriba >= img1Abajo && img2Arriba <= img1Arriba && img2Izquierda >= img1Izquierda && img2Izquierda <= img1Derecha) {
+            tocoMoneda = true;
+            Log.d("IntEntSprites", "Intersección caso 6");
+        }
+
+        if (img2Abajo >= img1Abajo && img2Abajo <= img1Arriba && img2Derecha >= img1Izquierda && img2Derecha <= img1Derecha) {
+            tocoMoneda = true;
+            Log.d("IntEntSprites", "Intersección caso 7");
+        }
+
+        if (img2Abajo >= img1Abajo && img2Abajo <= img1Arriba && img2Izquierda >= img1Izquierda && img2Izquierda <= img1Derecha) {
+            tocoMoneda = true;
+            Log.d("IntEntSprites", "Intersección caso 8");
+        }
+
+
+        return tocoMoneda;
+    }
+
     void PonerJugador(){
         _Jugador = Sprite.sprite("jugador.png");
 
@@ -79,19 +163,83 @@ public class capaJuego extends Layer {
         super.addChild(_Jugador);
 
     }
-    void PonerEnemigo(){
-        _Enemigo = Sprite.sprite("enemigo.png");
+    public void PonerEnemigos(float inutil){
+        Sprite enemigo = Sprite.sprite("enemigo.png");
 
-        _Enemigo.setPosition( _Pantalla.getWidth()/2, 600);
-        Log.d("JuegoPos", "Enemigo: posX: " + _Enemigo.getPositionX() + "   posY: " + _Enemigo.getPositionY());
+        Random generadorDeAzar = new Random();
+        CCPoint posicionImagen = new CCPoint();
 
-        super.addChild(_Enemigo);
+        posicionImagen.x = generadorDeAzar.nextInt((int) (_Pantalla.width - enemigo.getWidth()));
+        posicionImagen.x += enemigo.getWidth() / 2;
+        posicionImagen.y = generadorDeAzar.nextInt((int) (_Pantalla.height - 70));
+        enemigo.setPosition(posicionImagen.x, posicionImagen.y);
 
+        arrEnemigos.add(enemigo);
+        super.addChild(enemigo);
     }
+    boolean verificarTocoEnemigo(){
+        float img1Derecha, img1Izquierda, img1Arriba, img1Abajo;
+        float img2Derecha, img2Izquierda, img2Arriba, img2Abajo;
+
+        img1Arriba = _Jugador.getPositionY() + _Jugador.getHeight()/2;
+        img1Abajo = _Jugador.getPositionY() - _Jugador.getHeight()/2;
+        img1Derecha = _Jugador.getPositionX() + _Jugador.getWidth()/2;
+        img1Izquierda = _Jugador.getPositionX() - _Jugador.getWidth()/2;
+
+        img2Arriba = moneda.getPositionY() + moneda.getHeight()/2;
+        img2Abajo = moneda.getPositionY() - moneda.getHeight()/2;
+        img2Derecha = moneda.getPositionX() + moneda.getWidth()/2;
+        img2Izquierda = moneda.getPositionX() - moneda.getWidth()/2;
+
+
+        if (img1Arriba>=img2Abajo && img1Arriba<=img2Arriba && img1Derecha >= img2Izquierda && img1Derecha <= img2Derecha) {
+            tocoMoneda = true;
+            Log.d("IntEntSprites", "Intersección caso 1");
+        }
+
+        if (img1Arriba >= img2Abajo && img1Arriba <= img2Arriba && img1Izquierda >= img2Izquierda && img1Izquierda <= img2Derecha) {
+            tocoMoneda = true;
+            Log.d("IntEntSprites", "Intersección caso 2");
+        }
+
+        if (img1Abajo >= img2Abajo && img1Abajo <= img2Arriba && img1Derecha >= img2Izquierda && img1Derecha <= img2Derecha) {
+            tocoMoneda = true;
+            Log.d("IntEntSprites", "Intersección caso 3");
+        }
+
+        if (img1Abajo >= img2Abajo && img1Abajo <= img2Arriba && img1Izquierda >= img2Izquierda && img1Izquierda <= img2Derecha) {
+            tocoMoneda = true;
+            Log.d("IntEntSprites", "Intersección caso 4");
+        }
+
+        if (img2Arriba >= img1Abajo && img2Arriba <= img1Arriba && img2Derecha >= img1Izquierda && img2Derecha <= img1Derecha) {
+            tocoMoneda = true;
+            Log.d("IntEntSprites", "Intersección caso 5");
+        }
+
+        if (img2Arriba >= img1Abajo && img2Arriba <= img1Arriba && img2Izquierda >= img1Izquierda && img2Izquierda <= img1Derecha) {
+            tocoMoneda = true;
+            Log.d("IntEntSprites", "Intersección caso 6");
+        }
+
+        if (img2Abajo >= img1Abajo && img2Abajo <= img1Arriba && img2Derecha >= img1Izquierda && img2Derecha <= img1Derecha) {
+            tocoMoneda = true;
+            Log.d("IntEntSprites", "Intersección caso 7");
+        }
+
+        if (img2Abajo >= img1Abajo && img2Abajo <= img1Arriba && img2Izquierda >= img1Izquierda && img2Izquierda <= img1Derecha) {
+            tocoMoneda = true;
+            Log.d("IntEntSprites", "Intersección caso 8");
+        }
+
+
+        return tocoMoneda;
+    }
+
 
     void PonerTimer(){
         lblTimer  = Label.label("0s", "montserrat_semibold.ttf", 50);
-        lblTimer.setPosition(_Pantalla.getWidth() - (lblTimer.getWidth()/2 + 40),_Pantalla.getHeight() - 20);
+        lblTimer.setPosition(_Pantalla.getWidth() - (lblTimer.getWidth()/2 + 40),_Pantalla.getHeight() - 70);
         Log.d("JuegoPos", "Timer: posX: " + lblTimer.getPositionX() + "   posY: " + lblTimer.getPositionY());
         lblTimer.setColor(blanco);
 
@@ -156,9 +304,9 @@ public class capaJuego extends Layer {
         if(DetectarClick() ){
             comenzo = true;
             MoverJugador(x,y);
-
         }
 
+        verificarTocoMoneda();
 
         _Click.x = x;
         _Click.y = y;

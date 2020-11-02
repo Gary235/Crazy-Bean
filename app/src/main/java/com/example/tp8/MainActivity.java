@@ -2,8 +2,10 @@ package com.example.tp8;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActionBar;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
 import android.view.WindowManager;
 
 import org.cocos2d.opengl.CCGLSurfaceView;
