@@ -6,6 +6,7 @@ import android.view.MotionEvent;
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.tp8.R.raw;
 
+import org.cocos2d.actions.interval.ScaleBy;
 import org.cocos2d.layers.Layer;
 import org.cocos2d.nodes.Label;
 import org.cocos2d.nodes.Sprite;
@@ -49,7 +50,7 @@ public class capaJuego extends Layer {
         if(comenzo){
             comenzarJuego();
             super.schedule("PonerEnemigos", 3);
-            super.schedule("listenerMonedas", 0.5f);
+            super.schedule("listenerMonedas", 0.1f);
             super.schedule("listenerEnemigos", 0.01f);
 
             //schedule listener enemigos
