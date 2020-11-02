@@ -28,7 +28,7 @@ public class capaJuego extends Layer {
     Sprite moneda = Sprite.sprite("moneda.png");
 
     ArrayList<Sprite> arrEnemigos = new ArrayList<>();
-    boolean comenzo = false, tocoMoneda = false;
+    boolean comenzo = false, tocoMoneda = false, tocoEnemigo = false;
 
     public capaJuego(CCSize _Pantalla) {
         this._Pantalla = _Pantalla;
@@ -49,8 +49,8 @@ public class capaJuego extends Layer {
         if(comenzo){
             comenzarJuego();
             super.schedule("PonerEnemigos", 3);
-            super.schedule("listenerMonedas", 0.1f);
-            super.schedule("listenerEnemigos", 0.1f);
+            super.schedule("listenerMonedas", 0.5f);
+            super.schedule("listenerEnemigos", 0.01f);
 
             //schedule listener enemigos
             unschedule("listenerJugador");
@@ -180,60 +180,72 @@ public class capaJuego extends Layer {
     boolean verificarTocoEnemigo(){
         float img1Derecha, img1Izquierda, img1Arriba, img1Abajo;
         float img2Derecha, img2Izquierda, img2Arriba, img2Abajo;
+        int i = 0;
+        while (!tocoEnemigo && i < arrEnemigos.size()){
+            img1Arriba = _Jugador.getPositionY() + _Jugador.getHeight()/2;
+            img1Abajo = _Jugador.getPositionY() - _Jugador.getHeight()/2;
+            img1Derecha = _Jugador.getPositionX() + _Jugador.getWidth()/2;
+            img1Izquierda = _Jugador.getPositionX() - _Jugador.getWidth()/2;
 
-        img1Arriba = _Jugador.getPositionY() + _Jugador.getHeight()/2;
-        img1Abajo = _Jugador.getPositionY() - _Jugador.getHeight()/2;
-        img1Derecha = _Jugador.getPositionX() + _Jugador.getWidth()/2;
-        img1Izquierda = _Jugador.getPositionX() - _Jugador.getWidth()/2;
-
-        img2Arriba = moneda.getPositionY() + moneda.getHeight()/2;
-        img2Abajo = moneda.getPositionY() - moneda.getHeight()/2;
-        img2Derecha = moneda.getPositionX() + moneda.getWidth()/2;
-        img2Izquierda = moneda.getPositionX() - moneda.getWidth()/2;
+            img2Arriba = arrEnemigos.get(i).getPositionY() + arrEnemigos.get(i).getHeight()/2;
+            img2Abajo = arrEnemigos.get(i).getPositionY() - arrEnemigos.get(i).getHeight()/2;
+            img2Derecha = arrEnemigos.get(i).getPositionX() + arrEnemigos.get(i).getWidth()/2;
+            img2Izquierda = arrEnemigos.get(i).getPositionX() - arrEnemigos.get(i).getWidth()/2;
 
 
-        if (img1Arriba>=img2Abajo && img1Arriba<=img2Arriba && img1Derecha >= img2Izquierda && img1Derecha <= img2Derecha) {
-            tocoMoneda = true;
-            Log.d("IntEntSprites", "Intersección caso 1");
+            if (img1Arriba>=img2Abajo && img1Arriba<=img2Arriba && img1Derecha >= img2Izquierda && img1Derecha <= img2Derecha) {
+                tocoEnemigo = true;
+                Log.d("IntEntSprites", "Intersección caso 1");
+            }
+
+            if (img1Arriba >= img2Abajo && img1Arriba <= img2Arriba && img1Izquierda >= img2Izquierda && img1Izquierda <= img2Derecha) {
+                tocoEnemigo = true;
+                Log.d("IntEntSprites", "Intersección caso 2");
+            }
+
+            if (img1Abajo >= img2Abajo && img1Abajo <= img2Arriba && img1Derecha >= img2Izquierda && img1Derecha <= img2Derecha) {
+                tocoEnemigo = true;
+                Log.d("IntEntSprites", "Intersección caso 3");
+            }
+
+            if (img1Abajo >= img2Abajo && img1Abajo <= img2Arriba && img1Izquierda >= img2Izquierda && img1Izquierda <= img2Derecha) {
+                tocoEnemigo = true;
+                Log.d("IntEntSprites", "Intersección caso 4");
+            }
+
+            if (img2Arriba >= img1Abajo && img2Arriba <= img1Arriba && img2Derecha >= img1Izquierda && img2Derecha <= img1Derecha) {
+                tocoEnemigo = true;
+                Log.d("IntEntSprites", "Intersección caso 5");
+            }
+
+            if (img2Arriba >= img1Abajo && img2Arriba <= img1Arriba && img2Izquierda >= img1Izquierda && img2Izquierda <= img1Derecha) {
+                tocoEnemigo = true;
+                Log.d("IntEntSprites", "Intersección caso 6");
+            }
+
+            if (img2Abajo >= img1Abajo && img2Abajo <= img1Arriba && img2Derecha >= img1Izquierda && img2Derecha <= img1Derecha) {
+                tocoEnemigo = true;
+                Log.d("IntEntSprites", "Intersección caso 7");
+            }
+
+            if (img2Abajo >= img1Abajo && img2Abajo <= img1Arriba && img2Izquierda >= img1Izquierda && img2Izquierda <= img1Derecha) {
+                tocoEnemigo = true;
+                Log.d("IntEntSprites", "Intersección caso 8");
+            }
+
+            i++;
         }
 
-        if (img1Arriba >= img2Abajo && img1Arriba <= img2Arriba && img1Izquierda >= img2Izquierda && img1Izquierda <= img2Derecha) {
-            tocoMoneda = true;
-            Log.d("IntEntSprites", "Intersección caso 2");
+
+        return tocoEnemigo;
+    }
+    public void listenerEnemigos(float inutil){
+
+
+        if(tocoEnemigo){
+            Log.d("JuegoPerder", "PERDISTE MALOOOO");
+            tocoEnemigo = false;
         }
-
-        if (img1Abajo >= img2Abajo && img1Abajo <= img2Arriba && img1Derecha >= img2Izquierda && img1Derecha <= img2Derecha) {
-            tocoMoneda = true;
-            Log.d("IntEntSprites", "Intersección caso 3");
-        }
-
-        if (img1Abajo >= img2Abajo && img1Abajo <= img2Arriba && img1Izquierda >= img2Izquierda && img1Izquierda <= img2Derecha) {
-            tocoMoneda = true;
-            Log.d("IntEntSprites", "Intersección caso 4");
-        }
-
-        if (img2Arriba >= img1Abajo && img2Arriba <= img1Arriba && img2Derecha >= img1Izquierda && img2Derecha <= img1Derecha) {
-            tocoMoneda = true;
-            Log.d("IntEntSprites", "Intersección caso 5");
-        }
-
-        if (img2Arriba >= img1Abajo && img2Arriba <= img1Arriba && img2Izquierda >= img1Izquierda && img2Izquierda <= img1Derecha) {
-            tocoMoneda = true;
-            Log.d("IntEntSprites", "Intersección caso 6");
-        }
-
-        if (img2Abajo >= img1Abajo && img2Abajo <= img1Arriba && img2Derecha >= img1Izquierda && img2Derecha <= img1Derecha) {
-            tocoMoneda = true;
-            Log.d("IntEntSprites", "Intersección caso 7");
-        }
-
-        if (img2Abajo >= img1Abajo && img2Abajo <= img1Arriba && img2Izquierda >= img1Izquierda && img2Izquierda <= img1Derecha) {
-            tocoMoneda = true;
-            Log.d("IntEntSprites", "Intersección caso 8");
-        }
-
-
-        return tocoMoneda;
     }
 
 
@@ -307,6 +319,7 @@ public class capaJuego extends Layer {
         }
 
         verificarTocoMoneda();
+        verificarTocoEnemigo();
 
         _Click.x = x;
         _Click.y = y;
