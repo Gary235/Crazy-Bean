@@ -246,6 +246,7 @@ public class capaJuego extends Layer {
         if(tocoEnemigo){
             Log.d("JuegoPerder", "PERDISTE MALOOOO");
             tocoEnemigo = false;
+            GameOver();
         }
     }
 
@@ -264,14 +265,10 @@ public class capaJuego extends Layer {
         acumTimer ++ ;
     }
     void comenzarJuego(){
-
-
         try { Juego.MusicadeFondo.prepare(); } catch (IOException e) { e.printStackTrace(); }
         Juego.MusicadeFondo.start();
 
         super.schedule("actualizarTimer", 1);
-
-
     }
 
     void MoverJugador(float x, float y){
@@ -328,4 +325,14 @@ public class capaJuego extends Layer {
         return true;
     }
 
+
+
+    void GameOver(){
+        unschedule("PonerEnemigos");
+        unschedule("listenerMonedas");
+        unschedule("listenerEnemigos");
+
+        Juego.escenaGameOver();
+
+    }
 }

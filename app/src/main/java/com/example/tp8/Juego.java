@@ -55,7 +55,15 @@ public class Juego {
         Director.sharedDirector().replaceScene(escena);
     }
 
+    public static void escenaGameOver() {
+        Scene escena = Scene.node();
+        capaGameOver capaGameOver = new capaGameOver(_Pantalla);
 
+        escena.addChild(capaGameOver);
+        Director.sharedDirector().replaceScene(escena);
+
+
+    }
 
 
 }
