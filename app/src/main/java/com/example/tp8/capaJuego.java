@@ -25,7 +25,7 @@ public class capaJuego extends Layer {
     CCPoint _Click = new CCPoint();
     Label lblTimer, lblContadorDeMonedas;
     CCColor3B blanco;
-    int acumTimer = 0, contMoneda = 0;
+    int acumTimer = 0, contMoneda = -1;
     Sprite moneda = Sprite.sprite("moneda.png");
 
     ArrayList<Sprite> arrEnemigos = new ArrayList<>();
@@ -76,7 +76,7 @@ public class capaJuego extends Layer {
     public void listenerMonedas(float inutil){
 
 
-        if(tocoMoneda || contMoneda == 0){
+        if(tocoMoneda || contMoneda == -1){
             super.removeChild(moneda, true);
             Random generadorDeAzar = new Random();
             CCPoint posicionImagen = new CCPoint();
