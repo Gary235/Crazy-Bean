@@ -37,8 +37,8 @@ public class capaGameOver extends Layer {
         Label lblMonedasGanadas;
 
         int monedas = capaJuego.contMoneda == -1 ? 0 : capaJuego.contMoneda;
-        lblMonedasGanadas  = Label.label(monedas + "$", "montserrat_semibold.ttf", 100);
-        lblMonedasGanadas.setPosition(_Pantalla.getWidth()/2 - 100,_Pantalla.getHeight()/2 + 100);
+        lblMonedasGanadas  = Label.label(monedas + "$", "montserrat_medium.ttf", 80);
+        lblMonedasGanadas.setPosition(_Pantalla.getWidth()/2 - 150,_Pantalla.getHeight()/2 + 150);
         lblMonedasGanadas.setColor(color3B);
 
         super.addChild(lblMonedasGanadas);
@@ -49,8 +49,8 @@ public class capaGameOver extends Layer {
         Label lblTiempoJugado;
 
 
-        lblTiempoJugado  = Label.label(String.valueOf(capaJuego.acumTimer) + "s", "montserrat_semibold.ttf", 100);
-        lblTiempoJugado.setPosition(_Pantalla.getWidth()/2 + 100,_Pantalla.getHeight()/2 + 100);
+        lblTiempoJugado  = Label.label(String.valueOf(capaJuego.acumTimer) + "s", "montserrat_semibold.ttf", 80);
+        lblTiempoJugado.setPosition(_Pantalla.getWidth()/2 + 150,_Pantalla.getHeight()/2 + 150);
         lblTiempoJugado.setColor(color3B);
 
         super.addChild(lblTiempoJugado);

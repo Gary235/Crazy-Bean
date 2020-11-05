@@ -21,7 +21,7 @@ import java.util.Random;
 public class capaJuego extends Layer {
 
     CCSize _Pantalla;
-    Sprite _Jugador,_Enemigo;
+    Sprite _Jugador;
     CCPoint _Click = new CCPoint();
     Label lblTimer, lblContadorDeMonedas;
     CCColor3B blanco;
