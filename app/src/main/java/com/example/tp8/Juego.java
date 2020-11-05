@@ -37,7 +37,6 @@ public class Juego {
 
     }
     public void escenaComienzo() {
-
         Scene escena = Scene.node();
         capaComienzo capaComienzo = new capaComienzo(_Pantalla);
 
@@ -47,7 +46,6 @@ public class Juego {
 
 
     public static void escenaJuego() {
-
         Scene escena = Scene.node();
         capaJuego capaJuego = new capaJuego(_Pantalla);
 
@@ -61,9 +59,5 @@ public class Juego {
 
         escena.addChild(capaGameOver);
         Director.sharedDirector().replaceScene(escena);
-
-
     }
-
-
 }

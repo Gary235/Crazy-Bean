@@ -25,13 +25,16 @@ public class capaJuego extends Layer {
     CCPoint _Click = new CCPoint();
     Label lblTimer, lblContadorDeMonedas;
     CCColor3B blanco;
-    int acumTimer = 0, contMoneda = -1;
+    public static int acumTimer = 0, contMoneda = -1;
     Sprite moneda = Sprite.sprite("moneda.png");
 
     ArrayList<Sprite> arrEnemigos = new ArrayList<>();
     boolean comenzo = false, tocoMoneda = false, tocoEnemigo = false;
 
     public capaJuego(CCSize _Pantalla) {
+         acumTimer = 0; contMoneda = -1;
+         comenzo = false; tocoMoneda = false; tocoEnemigo = false;
+
         this._Pantalla = _Pantalla;
         setIsTouchEnabled(true);
         blanco = new CCColor3B(255,255,255);
@@ -40,8 +43,6 @@ public class capaJuego extends Layer {
         PonerTimer();
         PonerContadordeMonedas();
         super.schedule("listenerJugador", 0.01f);
-
-
     }
 
 
