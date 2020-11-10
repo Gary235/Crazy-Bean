@@ -22,8 +22,6 @@ public class capaGameOver extends Layer {
     public capaGameOver(CCSize pantalla) {
         this._Pantalla = pantalla;
         setIsTouchEnabled(true);
-
-
         ponerTitulo();
         ponerBotonInicio();
         ponerMonedasGanadas();
@@ -60,11 +58,9 @@ public class capaGameOver extends Layer {
     void ponerTitulo(){
         CCColor3B color3B;
         color3B = new CCColor3B(255,255,255);
-
         label  = Label.label("Game Over", "montserrat_semibold.ttf", 150);
         label.setPosition(_Pantalla.getWidth()/2,_Pantalla.getHeight()/2 - 50);
         label.setColor(color3B);
-
         super.addChild(label);
     }
     void ponerBotonInicio(){

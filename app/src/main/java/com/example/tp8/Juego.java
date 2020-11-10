@@ -28,7 +28,6 @@ public class Juego {
         Log.d("Juego", "Empezo");
         Director.sharedDirector().attachInView(_Vista);
         _Pantalla = Director.sharedDirector().displaySize();
-
         MusicadeFondo = new MediaPlayer();
         MusicadeFondo = MediaPlayer.create(miContexto, R.raw.nyan_cat);
         MusicadeFondo.setLooping(true);
@@ -48,7 +47,6 @@ public class Juego {
     public static void escenaJuego() {
         Scene escena = Scene.node();
         capaJuego capaJuego = new capaJuego(_Pantalla);
-
         escena.addChild(capaJuego);
         Director.sharedDirector().replaceScene(escena);
     }
@@ -56,7 +54,6 @@ public class Juego {
     public static void escenaGameOver() {
         Scene escena = Scene.node();
         capaGameOver capaGameOver = new capaGameOver(_Pantalla);
-
         escena.addChild(capaGameOver);
         Director.sharedDirector().replaceScene(escena);
     }

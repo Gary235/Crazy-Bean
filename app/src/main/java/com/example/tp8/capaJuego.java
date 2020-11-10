@@ -1,12 +1,15 @@
 package com.example.tp8;
 
+import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import com.airbnb.lottie.LottieAnimationView;
 import com.example.tp8.R.raw;
 
+import org.cocos2d.actions.interval.IntervalAction;
+import org.cocos2d.actions.interval.MoveTo;
 import org.cocos2d.actions.interval.ScaleBy;
+import org.cocos2d.actions.interval.Sequence;
 import org.cocos2d.layers.Layer;
 import org.cocos2d.nodes.Label;
 import org.cocos2d.nodes.Sprite;
@@ -28,6 +31,7 @@ public class capaJuego extends Layer {
     public static int acumTimer = 0, contMoneda = -1;
     Sprite moneda = Sprite.sprite("moneda.png");
 
+
     ArrayList<Sprite> arrEnemigos = new ArrayList<>();
     boolean comenzo = false, tocoMoneda = false, tocoEnemigo = false;
 
@@ -47,17 +51,29 @@ public class capaJuego extends Layer {
 
 
     public void listenerJugador(float nada){
-
         if(comenzo){
             comenzarJuego();
             super.schedule("PonerEnemigos", 3);
+           super.schedule("SacarEnemigos", 7);
+            super.schedule("GenerarEnemigosGrandes", 15);
+            super.schedule("Niveles", 60);
             super.schedule("listenerMonedas", 0.1f);
             super.schedule("listenerEnemigos", 0.01f);
-
-            //schedule listener enemigos
             unschedule("listenerJugador");
         }
     }
+
+
+    public void Niveles(float inutil)
+    {
+        int A=0;
+        while(A!=arrEnemigos.size()){
+            removeChild(arrEnemigos.get(A),true);
+            arrEnemigos.remove(A);
+        }
+        super.schedule("EnemigosVoladores", 8);
+    }
+
     void PonerContadordeMonedas(){
         Sprite moneda = Sprite.sprite("moneda.png");
         moneda.setPosition(50, _Pantalla.getHeight() - 70);
@@ -76,24 +92,88 @@ public class capaJuego extends Layer {
     }
     public void listenerMonedas(float inutil){
 
-
         if(tocoMoneda || contMoneda == -1){
             super.removeChild(moneda, true);
             Random generadorDeAzar = new Random();
             CCPoint posicionImagen = new CCPoint();
-
-            posicionImagen.x = generadorDeAzar.nextInt((int) (_Pantalla.width - moneda.getWidth()));
-            posicionImagen.x += moneda.getWidth() / 2;
-            posicionImagen.y = generadorDeAzar.nextInt((int) (_Pantalla.height - 70));
-            posicionImagen.y += moneda.getHeight() / 2;
-            moneda.setPosition(posicionImagen.x, posicionImagen.y);
+            do{
+                posicionImagen.x = generadorDeAzar.nextInt((int) (_Pantalla.width - moneda.getWidth()));
+                posicionImagen.x += moneda.getWidth() / 2;
+                posicionImagen.y = generadorDeAzar.nextInt((int) (_Pantalla.height - 70));
+                posicionImagen.y += moneda.getHeight() / 2;
+                moneda.setPosition(posicionImagen.x, posicionImagen.y);
+            }while (choqueMonedaEnemigo());
             super.addChild(moneda);
             contMoneda ++;
             lblContadorDeMonedas.setString(String.valueOf(contMoneda));
             tocoMoneda = false;
         }
     }
+    boolean choqueMonedaEnemigo()
+    {
+        Boolean Toco= false;
+        float img1Derecha, img1Izquierda, img1Arriba, img1Abajo;
+        float img2Derecha, img2Izquierda, img2Arriba, img2Abajo;
+        int i = 0;
+        while (!tocoEnemigo && i < arrEnemigos.size()){
+            img1Arriba = moneda.getPositionY() + moneda.getHeight()/2;
+            img1Abajo = moneda.getPositionY() - moneda.getHeight()/2;
+            img1Derecha = moneda.getPositionX() + moneda.getWidth()/2;
+            img1Izquierda = moneda.getPositionX() - moneda.getWidth()/2;
+
+            img2Arriba = arrEnemigos.get(i).getPositionY() + arrEnemigos.get(i).getHeight()/2;
+            img2Abajo = arrEnemigos.get(i).getPositionY() - arrEnemigos.get(i).getHeight()/2;
+            img2Derecha = arrEnemigos.get(i).getPositionX() + arrEnemigos.get(i).getWidth()/2;
+            img2Izquierda = arrEnemigos.get(i).getPositionX() - arrEnemigos.get(i).getWidth()/2;
+
+
+            if (img1Arriba>=img2Abajo && img1Arriba<=img2Arriba && img1Derecha >= img2Izquierda && img1Derecha <= img2Derecha) {
+                Toco = true;
+                Log.d("IntEntSprites", "Intersección caso 1");
+            }
+
+            if (img1Arriba >= img2Abajo && img1Arriba <= img2Arriba && img1Izquierda >= img2Izquierda && img1Izquierda <= img2Derecha) {
+                Toco = true;
+                Log.d("IntEntSprites", "Intersección caso 2");
+            }
+
+            if (img1Abajo >= img2Abajo && img1Abajo <= img2Arriba && img1Derecha >= img2Izquierda && img1Derecha <= img2Derecha) {
+                Toco = true;
+                Log.d("IntEntSprites", "Intersección caso 3");
+            }
+
+            if (img1Abajo >= img2Abajo && img1Abajo <= img2Arriba && img1Izquierda >= img2Izquierda && img1Izquierda <= img2Derecha) {
+                Toco = true;
+                Log.d("IntEntSprites", "Intersección caso 4");
+            }
+
+            if (img2Arriba >= img1Abajo && img2Arriba <= img1Arriba && img2Derecha >= img1Izquierda && img2Derecha <= img1Derecha) {
+                Toco = true;
+                Log.d("IntEntSprites", "Intersección caso 5");
+            }
+
+            if (img2Arriba >= img1Abajo && img2Arriba <= img1Arriba && img2Izquierda >= img1Izquierda && img2Izquierda <= img1Derecha) {
+                Toco = true;
+                Log.d("IntEntSprites", "Intersección caso 6");
+            }
+
+            if (img2Abajo >= img1Abajo && img2Abajo <= img1Arriba && img2Derecha >= img1Izquierda && img2Derecha <= img1Derecha) {
+                Toco = true;
+                Log.d("IntEntSprites", "Intersección caso 7");
+            }
+
+            if (img2Abajo >= img1Abajo && img2Abajo <= img1Arriba && img2Izquierda >= img1Izquierda && img2Izquierda <= img1Derecha) {
+                Toco = true;
+                Log.d("IntEntSprites", "Intersección caso 8");
+            }
+
+            i++;
+        }
+        return Toco;
+    }
+
     boolean verificarTocoMoneda(){
+
         float img1Derecha, img1Izquierda, img1Arriba, img1Abajo;
         float img2Derecha, img2Izquierda, img2Arriba, img2Abajo;
 
@@ -151,7 +231,6 @@ public class capaJuego extends Layer {
 
         return tocoMoneda;
     }
-
     void PonerJugador(){
         _Jugador = Sprite.sprite("jugador.png");
 
@@ -165,6 +244,7 @@ public class capaJuego extends Layer {
         super.addChild(_Jugador);
 
     }
+
     public void PonerEnemigos(float inutil){
         Sprite enemigo = Sprite.sprite("enemigo.png");
 
@@ -179,6 +259,56 @@ public class capaJuego extends Layer {
         arrEnemigos.add(enemigo);
         super.addChild(enemigo);
     }
+    public void SacarEnemigos (float inutil)
+    {
+        removeChild(  arrEnemigos.get(0),true);
+        arrEnemigos.remove(0);
+    }
+    public void GenerarEnemigosGrandes(float inutil){
+        Sprite enemigo = Sprite.sprite("enemigo.png");
+        enemigo.scale(2);
+        Random generadorDeAzar = new Random();
+        CCPoint posicionImagen = new CCPoint();
+        posicionImagen.x = generadorDeAzar.nextInt((int) (_Pantalla.width - enemigo.getWidth()));
+        posicionImagen.x += enemigo.getWidth() / 2;
+        posicionImagen.y = generadorDeAzar.nextInt((int) (_Pantalla.height - 70));
+        enemigo.setPosition(posicionImagen.x, posicionImagen.y);
+        arrEnemigos.add(enemigo);
+        super.addChild(enemigo);
+    }
+    public void EnemigosVoladores(float inutil){
+        Sprite enemigo = Sprite.sprite("enemigo.png");
+        int num;
+        IntervalAction secuencia = null;
+        MoveTo derecha,izquierda;
+        Random generadorDeAzar = new Random();
+        CCPoint posicionImagen = new CCPoint();
+        posicionImagen.x = generadorDeAzar.nextInt((int) (_Pantalla.width - enemigo.getWidth()));
+        posicionImagen.x += enemigo.getWidth() / 2;
+        num = generadorDeAzar.nextInt((int) (3));
+        if(num==0)
+        {
+            posicionImagen.y = _Pantalla.height - (_Pantalla.height/2);
+        }
+        if(num==1)
+        {
+            posicionImagen.y = _Pantalla.height - (_Pantalla.height/3);
+        }
+        if(num==2)
+        {
+            posicionImagen.y = _Pantalla.height + (_Pantalla.height/3);
+        }
+        enemigo.setPosition(posicionImagen.x, posicionImagen.y);
+        arrEnemigos.add(enemigo);
+        super.addChild(enemigo);
+
+        derecha= MoveTo.action(5,(_Pantalla.width-enemigo.getWidth())-100,posicionImagen.y);
+        izquierda= MoveTo.action(5,(enemigo.getWidth()+ 100),posicionImagen.y);
+        secuencia = Sequence.actions(derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda);
+        enemigo.runAction(secuencia);
+
+    }
+
     boolean verificarTocoEnemigo(){
         float img1Derecha, img1Izquierda, img1Arriba, img1Abajo;
         float img2Derecha, img2Izquierda, img2Arriba, img2Abajo;
@@ -194,56 +324,93 @@ public class capaJuego extends Layer {
             img2Derecha = arrEnemigos.get(i).getPositionX() + arrEnemigos.get(i).getWidth()/2;
             img2Izquierda = arrEnemigos.get(i).getPositionX() - arrEnemigos.get(i).getWidth()/2;
 
+            if( arrEnemigos.get(i).getScaleX()<=2) {
+                if (img1Arriba >= img2Abajo && img1Arriba <= img2Arriba && img1Derecha >= img2Izquierda && img1Derecha <= img2Derecha) {
+                    tocoEnemigo = true;
+                    Log.d("IntEntSprites", "Intersección caso 1");
+                }
 
-            if (img1Arriba>=img2Abajo && img1Arriba<=img2Arriba && img1Derecha >= img2Izquierda && img1Derecha <= img2Derecha) {
-                tocoEnemigo = true;
-                Log.d("IntEntSprites", "Intersección caso 1");
+                if (img1Arriba >= img2Abajo && img1Arriba <= img2Arriba && img1Izquierda >= img2Izquierda && img1Izquierda <= img2Derecha) {
+                    tocoEnemigo = true;
+                    Log.d("IntEntSprites", "Intersección caso 2");
+                }
+
+                if (img1Abajo >= img2Abajo && img1Abajo <= img2Arriba && img1Derecha >= img2Izquierda && img1Derecha <= img2Derecha) {
+                    tocoEnemigo = true;
+                    Log.d("IntEntSprites", "Intersección caso 3");
+                }
+
+                if (img1Abajo >= img2Abajo && img1Abajo <= img2Arriba && img1Izquierda >= img2Izquierda && img1Izquierda <= img2Derecha) {
+                    tocoEnemigo = true;
+                    Log.d("IntEntSprites", "Intersección caso 4");
+                }
+
+                if (img2Arriba >= img1Abajo && img2Arriba <= img1Arriba && img2Derecha >= img1Izquierda && img2Derecha <= img1Derecha) {
+                    tocoEnemigo = true;
+                    Log.d("IntEntSprites", "Intersección caso 5");
+                }
+
+                if (img2Arriba >= img1Abajo && img2Arriba <= img1Arriba && img2Izquierda >= img1Izquierda && img2Izquierda <= img1Derecha) {
+                    tocoEnemigo = true;
+                    Log.d("IntEntSprites", "Intersección caso 6");
+                }
+
+                if (img2Abajo >= img1Abajo && img2Abajo <= img1Arriba && img2Derecha >= img1Izquierda && img2Derecha <= img1Derecha) {
+                    tocoEnemigo = true;
+                    Log.d("IntEntSprites", "Intersección caso 7");
+                }
+
+                if (img2Abajo >= img1Abajo && img2Abajo <= img1Arriba && img2Izquierda >= img1Izquierda && img2Izquierda <= img1Derecha) {
+                    tocoEnemigo = true;
+                    Log.d("IntEntSprites", "Intersección caso 8");
+                }
             }
+            else {
+                if (img1Arriba >= img2Abajo * 2 && img1Arriba <= img2Arriba * 2 && img1Derecha >= img2Izquierda *2 && img1Derecha <= img2Derecha * 2) {
+                    tocoEnemigo = true;
+                    Log.d("IntEntSprites", "Intersección caso 1");
+                }
 
-            if (img1Arriba >= img2Abajo && img1Arriba <= img2Arriba && img1Izquierda >= img2Izquierda && img1Izquierda <= img2Derecha) {
-                tocoEnemigo = true;
-                Log.d("IntEntSprites", "Intersección caso 2");
+                if (img1Arriba >= img2Abajo * 2 && img1Arriba <= img2Arriba * 2 && img1Izquierda >= img2Izquierda * 2 && img1Izquierda <= img2Derecha * 2) {
+                    tocoEnemigo = true;
+                    Log.d("IntEntSprites", "Intersección caso 2");
+                }
+
+                if (img1Abajo >= img2Abajo * 2 && img1Abajo <= img2Arriba * 2 && img1Derecha >= img2Izquierda * 2 && img1Derecha <= img2Derecha * 2) {
+                    tocoEnemigo = true;
+                    Log.d("IntEntSprites", "Intersección caso 3");
+                }
+
+                if (img1Abajo >= img2Abajo * 2 && img1Abajo <= img2Arriba * 2 && img1Izquierda >= img2Izquierda * 2 && img1Izquierda <= img2Derecha * 2) {
+                    tocoEnemigo = true;
+                    Log.d("IntEntSprites", "Intersección caso 4");
+                }
+
+                if (img2Arriba * 2 >= img1Abajo && img2Arriba * 2 <= img1Arriba && img2Derecha * 2 >= img1Izquierda && img2Derecha * 2 <= img1Derecha) {
+                    tocoEnemigo = true;
+                    Log.d("IntEntSprites", "Intersección caso 5");
+                }
+
+                if (img2Arriba * 2 >= img1Abajo && img2Arriba * 2 <= img1Arriba && img2Izquierda * 2 >= img1Izquierda && img2Izquierda * 2 <= img1Derecha) {
+                    tocoEnemigo = true;
+                    Log.d("IntEntSprites", "Intersección caso 6");
+                }
+
+                if (img2Abajo * 2 >= img1Abajo && img2Abajo * 2 <= img1Arriba && img2Derecha * 2 >= img1Izquierda && img2Derecha * 2 <= img1Derecha) {
+                    tocoEnemigo = true;
+                    Log.d("IntEntSprites", "Intersección caso 7");
+                }
+
+                if (img2Abajo * 2 >= img1Abajo && img2Abajo * 2 <= img1Arriba && img2Izquierda * 2>= img1Izquierda && img2Izquierda * 2<= img1Derecha) {
+                    tocoEnemigo = true;
+                    Log.d("IntEntSprites", "Intersección caso 8");
+                }
             }
-
-            if (img1Abajo >= img2Abajo && img1Abajo <= img2Arriba && img1Derecha >= img2Izquierda && img1Derecha <= img2Derecha) {
-                tocoEnemigo = true;
-                Log.d("IntEntSprites", "Intersección caso 3");
-            }
-
-            if (img1Abajo >= img2Abajo && img1Abajo <= img2Arriba && img1Izquierda >= img2Izquierda && img1Izquierda <= img2Derecha) {
-                tocoEnemigo = true;
-                Log.d("IntEntSprites", "Intersección caso 4");
-            }
-
-            if (img2Arriba >= img1Abajo && img2Arriba <= img1Arriba && img2Derecha >= img1Izquierda && img2Derecha <= img1Derecha) {
-                tocoEnemigo = true;
-                Log.d("IntEntSprites", "Intersección caso 5");
-            }
-
-            if (img2Arriba >= img1Abajo && img2Arriba <= img1Arriba && img2Izquierda >= img1Izquierda && img2Izquierda <= img1Derecha) {
-                tocoEnemigo = true;
-                Log.d("IntEntSprites", "Intersección caso 6");
-            }
-
-            if (img2Abajo >= img1Abajo && img2Abajo <= img1Arriba && img2Derecha >= img1Izquierda && img2Derecha <= img1Derecha) {
-                tocoEnemigo = true;
-                Log.d("IntEntSprites", "Intersección caso 7");
-            }
-
-            if (img2Abajo >= img1Abajo && img2Abajo <= img1Arriba && img2Izquierda >= img1Izquierda && img2Izquierda <= img1Derecha) {
-                tocoEnemigo = true;
-                Log.d("IntEntSprites", "Intersección caso 8");
-            }
-
             i++;
         }
-
-
         return tocoEnemigo;
     }
     public void listenerEnemigos(float inutil){
-
-
         if(tocoEnemigo){
             Log.d("JuegoPerder", "PERDISTE MALOOOO");
             tocoEnemigo = false;
@@ -265,13 +432,12 @@ public class capaJuego extends Layer {
         lblTimer.setString(acumTimer + "s");
         acumTimer ++ ;
     }
+
     void comenzarJuego(){
         try { Juego.MusicadeFondo.prepare(); } catch (IOException e) { e.printStackTrace(); }
         Juego.MusicadeFondo.start();
-
         super.schedule("actualizarTimer", 1);
     }
-
     void MoverJugador(float x, float y){
 
         _Jugador.setPosition(x, y);
@@ -326,14 +492,10 @@ public class capaJuego extends Layer {
         return true;
     }
 
-
-
     void GameOver(){
         unschedule("PonerEnemigos");
         unschedule("listenerMonedas");
         unschedule("listenerEnemigos");
-
         Juego.escenaGameOver();
-
     }
 }

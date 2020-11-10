@@ -8,6 +8,8 @@ import org.cocos2d.actions.interval.IntervalAction;
 import org.cocos2d.actions.interval.MoveBy;
 import org.cocos2d.actions.interval.Sequence;
 import org.cocos2d.layers.Layer;
+import org.cocos2d.menus.Menu;
+import org.cocos2d.menus.MenuItemImage;
 import org.cocos2d.nodes.Director;
 import org.cocos2d.nodes.Label;
 import org.cocos2d.nodes.Sprite;
@@ -24,15 +26,13 @@ public class capaComienzo extends Layer {
 
     public capaComienzo(CCSize pantalla) {
         setIsTouchEnabled(true);
-
         this._Pantalla = pantalla;
-
         ponerTitulo();
         ponerBotonInicio();
-        super.schedule("VerificarBoton", 0.01f);
+        //super.schedule("VerificarBoton", 0.01f);
     }
 
-    public void VerificarBoton(float floatInutil){
+    /*public void VerificarBoton(float floatInutil){
         if(apretado && cont == 0){
             //cambiar de escena
             Log.d("Juego", "Apretoooooo");
@@ -69,7 +69,7 @@ public class capaComienzo extends Layer {
 
 
         return (x <= img1Derecha && x >= img1Izquierda) && (y <= img1Arriba && y >= img1Abajo);
-    }
+    }*/
 
     void ponerTitulo(){
         CCColor3B color3B;
@@ -82,7 +82,18 @@ public class capaComienzo extends Layer {
         super.addChild(label);
     }
     void ponerBotonInicio(){
-        sprBoton = Sprite.sprite("boton_inicio.png");
+        Menu menu;
+        MenuItemImage botonIncicio;
+        botonIncicio = MenuItemImage.item("boton_inicio.png","boton_inicio.png",this,"Empezar");
+        CCPoint posicionBoton = new CCPoint();
+        posicionBoton.x = _Pantalla.getWidth()/2;
+        posicionBoton.y = _Pantalla.getHeight()/2 - label.getHeight();
+        botonIncicio.setPosition(posicionBoton.x, posicionBoton.y);
+        Log.d("Juego", "posX: " + posicionBoton.x + "   posY: " + posicionBoton.y);
+        menu = Menu.menu(botonIncicio);
+        menu.setPosition(0,0);
+        super.addChild(menu);
+        /*sprBoton = Sprite.sprite("boton_inicio.png");
 
         CCPoint posicionBoton = new CCPoint();
         posicionBoton.x = _Pantalla.getWidth()/2;
@@ -91,8 +102,20 @@ public class capaComienzo extends Layer {
         sprBoton.setPosition(posicionBoton.x, posicionBoton.y);
         Log.d("Juego", "posX: " + posicionBoton.x + "   posY: " + posicionBoton.y);
 
-        super.addChild(sprBoton);
+        super.addChild(sprBoton);*/
+    }
+    public void Empezar() {
+        Log.d("Juego", "Apretoooooo");
+        if(cont == 0){
+            //cambiar de escena
+            Log.d("Juego", "Apretoooooo");
+            Juego.escenaJuego();
+            //unschedule("VerificarBoton");
+            cont++;
+        }
 
     }
+
+
 
 }
