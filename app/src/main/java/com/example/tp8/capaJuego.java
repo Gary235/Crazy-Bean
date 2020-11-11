@@ -28,6 +28,7 @@ public class capaJuego extends Layer {
     CCPoint _Click = new CCPoint();
     Label lblTimer, lblContadorDeMonedas;
     CCColor3B blanco;
+    int cont=0;
     public static int acumTimer = 0, contMoneda = -1;
     Sprite moneda = Sprite.sprite("moneda.png");
 
@@ -59,6 +60,7 @@ public class capaJuego extends Layer {
             super.schedule("Niveles", 60);
             super.schedule("listenerMonedas", 0.1f);
             super.schedule("listenerEnemigos", 0.01f);
+
             unschedule("listenerJugador");
         }
     }
@@ -66,12 +68,25 @@ public class capaJuego extends Layer {
 
     public void Niveles(float inutil)
     {
+        cont++;
         int A=0;
         while(A!=arrEnemigos.size()){
             removeChild(arrEnemigos.get(A),true);
             arrEnemigos.remove(A);
         }
-        super.schedule("EnemigosVoladores", 8);
+        if(cont>0)
+        {
+            super.schedule("EnemigosVoladores", 8);
+        }
+        if (cont>1)
+        {
+            super.schedule("EnemigosVoladores2", 8);
+        }
+        if(cont>2)
+        {
+            super.schedule("EnemigosRayo", 5);
+        }
+
     }
 
     void PonerContadordeMonedas(){
@@ -109,8 +124,7 @@ public class capaJuego extends Layer {
             tocoMoneda = false;
         }
     }
-    boolean choqueMonedaEnemigo()
-    {
+    boolean choqueMonedaEnemigo() {
         Boolean Toco= false;
         float img1Derecha, img1Izquierda, img1Arriba, img1Abajo;
         float img2Derecha, img2Izquierda, img2Arriba, img2Abajo;
@@ -259,8 +273,7 @@ public class capaJuego extends Layer {
         arrEnemigos.add(enemigo);
         super.addChild(enemigo);
     }
-    public void SacarEnemigos (float inutil)
-    {
+    public void SacarEnemigos (float inutil) {
         removeChild(  arrEnemigos.get(0),true);
         arrEnemigos.remove(0);
     }
@@ -277,6 +290,7 @@ public class capaJuego extends Layer {
         super.addChild(enemigo);
     }
     public void EnemigosVoladores(float inutil){
+        Log.d("Vuela", "EnemigosVoladores: ");
         Sprite enemigo = Sprite.sprite("enemigo.png");
         int num;
         IntervalAction secuencia = null;
@@ -306,6 +320,80 @@ public class capaJuego extends Layer {
         izquierda= MoveTo.action(5,(enemigo.getWidth()+ 100),posicionImagen.y);
         secuencia = Sequence.actions(derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda);
         enemigo.runAction(secuencia);
+
+    }
+    public void EnemigosVoladores2(float inutil){
+        Log.d("Vuela", "EnemigosVoladores2: ");
+        Sprite enemigo = Sprite.sprite("enemigo.png");
+        int num;
+        IntervalAction secuencia = null;
+        MoveTo arriba,abajo;
+        Random generadorDeAzar = new Random();
+        CCPoint posicionImagen = new CCPoint();
+        posicionImagen.y = generadorDeAzar.nextInt((int) (_Pantalla.height - 100));
+        num = generadorDeAzar.nextInt((int) (3));
+        if(num==0)
+        {
+            posicionImagen.x = _Pantalla.width - (_Pantalla.width/2);
+        }
+        if(num==1)
+        {
+            posicionImagen.x = _Pantalla.width - (_Pantalla.width/3);
+        }
+        if(num==2)
+        {
+            posicionImagen.x = _Pantalla.width + (_Pantalla.width/3);
+        }
+        enemigo.setPosition(posicionImagen.x, posicionImagen.y);
+        arrEnemigos.add(enemigo);
+        super.addChild(enemigo);
+
+        arriba= MoveTo.action(10,posicionImagen.x,(_Pantalla.height - enemigo.getHeight())- 100);
+        abajo= MoveTo.action(10,posicionImagen.x,enemigo.getHeight()+ 100);
+        secuencia = Sequence.actions(arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo);
+        enemigo.runAction(secuencia);
+
+    }
+    public void EnemigosRayo(float inutil){
+        Log.d("Vuela", "EnemigosVoladores2: ");
+        Sprite enemigo = Sprite.sprite("enemigo.png");
+        int num;
+        IntervalAction secuencia = null;
+        MoveTo ir = null;
+        Random generadorDeAzar = new Random();
+        CCPoint posicionImagen = new CCPoint();
+
+        num = generadorDeAzar.nextInt((int) (4));
+        if(num==0)
+        {
+            posicionImagen.x = enemigo.getWidth() + 80;
+            posicionImagen.y= enemigo.getHeight() + 80;
+            ir= MoveTo.action(2, (_Pantalla.width - enemigo.getWidth()) - 80,(_Pantalla.height -enemigo.getHeight())  - 80);
+        }
+        if(num==1)
+        {
+            posicionImagen.x = (_Pantalla.width - enemigo.getWidth()) - 80;
+            posicionImagen.y= enemigo.getHeight() + 80;
+            ir= MoveTo.action(2,  enemigo.getWidth() + 80,(_Pantalla.height -enemigo.getHeight())  - 80);
+        }
+        if(num==2)
+        {
+            posicionImagen.x = (_Pantalla.width - enemigo.getWidth()) - 80;
+            posicionImagen.y= (_Pantalla.height -enemigo.getHeight())  - 80;
+            ir= MoveTo.action(2,  enemigo.getWidth() + 80,enemigo.getHeight() + 80);
+        }
+        if(num==3)
+        {
+            posicionImagen.x = enemigo.getWidth() + 80;
+            posicionImagen.y= (_Pantalla.height -enemigo.getHeight())  - 80;
+            ir= MoveTo.action(1, (_Pantalla.width - enemigo.getWidth()) - 80,enemigo.getHeight() + 80 );
+        }
+        enemigo.setPosition(posicionImagen.x, posicionImagen.y);
+        arrEnemigos.add(enemigo);
+        super.addChild(enemigo);
+        secuencia = Sequence.actions(ir);
+        enemigo.runAction(secuencia);
+
 
     }
 
