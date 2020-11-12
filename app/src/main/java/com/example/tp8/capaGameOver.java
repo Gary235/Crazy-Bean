@@ -1,9 +1,13 @@
 package com.example.tp8;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 
 import org.cocos2d.layers.Layer;
+import org.cocos2d.menus.Menu;
+import org.cocos2d.menus.MenuItemImage;
 import org.cocos2d.nodes.Label;
 import org.cocos2d.nodes.Sprite;
 import org.cocos2d.types.CCColor3B;
@@ -17,16 +21,44 @@ public class capaGameOver extends Layer {
     Sprite sprBoton;
     boolean apretado = false;
     int cont = 0;
+    MainActivity main;
 
 
     public capaGameOver(CCSize pantalla) {
+        main= (MainActivity) Juego.miContexto;
         this._Pantalla = pantalla;
         setIsTouchEnabled(true);
         ponerTitulo();
         ponerBotonInicio();
         ponerMonedasGanadas();
         ponerTiempoJugado();
+        ponerSave();
         super.schedule("VerificarBoton", 0.01f);
+    }
+
+    void ponerSave()
+    {
+        Menu menu;
+        MenuItemImage botonIncicio;
+        botonIncicio = MenuItemImage.item("boton_inicio.png","boton_inicio.png",this,"guardar");
+        CCPoint posicionBoton = new CCPoint();
+        posicionBoton.x = _Pantalla.getWidth()/2;
+        posicionBoton.y = _Pantalla.getHeight()/4 - label.getHeight();
+        botonIncicio.setPosition(posicionBoton.x, posicionBoton.y);
+        Log.d("Juego", "posX: " + posicionBoton.x + "   posY: " + posicionBoton.y);
+        menu = Menu.menu(botonIncicio);
+        menu.setPosition(0,0);
+        super.addChild(menu);
+    }
+
+    public void guardar()
+    {
+        Log.d("Guardar", "guardar: ");
+        Bundle datos = new Bundle();
+        datos.putInt("monedas",capaJuego.contMoneda == -1 ? 0 : capaJuego.contMoneda);
+        datos.putInt("tiempo",capaJuego.acumTimer);
+        main.aNombre(datos);
+
     }
 
     void ponerMonedasGanadas(){
@@ -45,12 +77,9 @@ public class capaGameOver extends Layer {
         CCColor3B color3B;
         color3B = new CCColor3B(255,255,255);
         Label lblTiempoJugado;
-
-
         lblTiempoJugado  = Label.label(String.valueOf(capaJuego.acumTimer) + "s", "montserrat_semibold.ttf", 80);
         lblTiempoJugado.setPosition(_Pantalla.getWidth()/2 + 150,_Pantalla.getHeight()/2 + 150);
         lblTiempoJugado.setColor(color3B);
-
         super.addChild(lblTiempoJugado);
     }
 

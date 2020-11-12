@@ -14,7 +14,7 @@ import org.cocos2d.types.CCSize;
 
 public class Juego {
 
-    Context miContexto;
+    static Context miContexto;
     CCGLSurfaceView _Vista;
     static CCSize _Pantalla;
     static MediaPlayer MusicadeFondo;
@@ -23,6 +23,7 @@ public class Juego {
         this._Vista = _Vista;
         this.miContexto = context;
     }
+
 
     public void ComenzarJuego() {
         Log.d("Juego", "Empezo");
@@ -57,4 +58,5 @@ public class Juego {
         escena.addChild(capaGameOver);
         Director.sharedDirector().replaceScene(escena);
     }
+
 }

@@ -3,8 +3,10 @@ package com.example.tp8;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActionBar;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -36,6 +38,14 @@ public class MainActivity extends AppCompatActivity {
         Juego miJuego;
         miJuego = new Juego(vista, this);
         miJuego.ComenzarJuego();
+    }
+
+    public void aNombre(Bundle X)
+    {
+        Intent llamada;
+        llamada = new Intent(this,IngresoNombre.class);
+        llamada.putExtras(X);
+        startActivity(llamada);
     }
 
 }
