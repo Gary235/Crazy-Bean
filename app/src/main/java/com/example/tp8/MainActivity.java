@@ -15,7 +15,7 @@ import org.cocos2d.opengl.CCGLSurfaceView;
 public class MainActivity extends AppCompatActivity {
 
     CCGLSurfaceView vista;
-
+    int cantMonMax=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +27,6 @@ public class MainActivity extends AppCompatActivity {
         vista = new CCGLSurfaceView(this);
         vista.setBackgroundColor(Color.argb(1,255,255,255));
         setContentView(vista);
-
-
     }
 
 
@@ -40,12 +38,11 @@ public class MainActivity extends AppCompatActivity {
         miJuego.ComenzarJuego();
     }
 
-    public void aNombre(Bundle X)
+
+    public void actualizarAcum(int x)
     {
-        Intent llamada;
-        llamada = new Intent(this,IngresoNombre.class);
-        llamada.putExtras(X);
-        startActivity(llamada);
+        cantMonMax=x;
     }
+
 
 }

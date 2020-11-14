@@ -1,6 +1,8 @@
 package com.example.tp8;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -16,12 +18,14 @@ import org.cocos2d.types.CCSize;
 
 public class capaGameOver extends Layer {
 
+
     CCSize _Pantalla;
     Label label;
     Sprite sprBoton;
     boolean apretado = false;
-    int cont = 0;
+    int cont = 0, max;
     MainActivity main;
+
 
 
     public capaGameOver(CCSize pantalla) {
@@ -32,11 +36,27 @@ public class capaGameOver extends Layer {
         ponerBotonInicio();
         ponerMonedasGanadas();
         ponerTiempoJugado();
-        ponerSave();
+        lblponerRecord();
+        //ponerSave();
         super.schedule("VerificarBoton", 0.01f);
     }
 
-    void ponerSave()
+    void lblponerRecord()
+    {
+        CCColor3B color3B;
+        color3B = new CCColor3B(255,255,255);
+        Label lblTiempoJugado;
+        if(capaJuego.contMoneda > main.cantMonMax)
+        {
+            main.actualizarAcum(capaJuego.contMoneda);
+        }
+        lblTiempoJugado  = Label.label("Record actual es: $" + main.cantMonMax,"montserrat_medium.ttf", 50);
+        lblTiempoJugado.setPosition(_Pantalla.getWidth()/2 ,_Pantalla.getHeight()/2 - 200);
+        lblTiempoJugado.setColor(color3B);
+        super.addChild(lblTiempoJugado);
+    }
+
+    /*void ponerSave()
     {
         Menu menu;
         MenuItemImage botonIncicio;
@@ -59,7 +79,7 @@ public class capaGameOver extends Layer {
         datos.putInt("tiempo",capaJuego.acumTimer);
         main.aNombre(datos);
 
-    }
+    }*/
 
     void ponerMonedasGanadas(){
         CCColor3B color3B;
@@ -83,7 +103,6 @@ public class capaGameOver extends Layer {
         super.addChild(lblTiempoJugado);
     }
 
-
     void ponerTitulo(){
         CCColor3B color3B;
         color3B = new CCColor3B(255,255,255);
@@ -97,7 +116,7 @@ public class capaGameOver extends Layer {
 
         CCPoint posicionBoton = new CCPoint();
         posicionBoton.x = _Pantalla.getWidth()/2;
-        posicionBoton.y = _Pantalla.getHeight()/2 - (label.getHeight() + 50);
+        posicionBoton.y = _Pantalla.getHeight()/2 - (label.getHeight() + 180);
 
         sprBoton.setPosition(posicionBoton.x, posicionBoton.y);
         Log.d("Juego", "posX: " + posicionBoton.x + "   posY: " + posicionBoton.y);

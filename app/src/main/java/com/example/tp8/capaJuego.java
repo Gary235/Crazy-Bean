@@ -31,6 +31,8 @@ public class capaJuego extends Layer {
     int cont=0;
     public static int acumTimer = 0, contMoneda = -1;
     Sprite moneda = Sprite.sprite("moneda.png");
+    Boolean jefe = false;
+    Sprite jefeSprite = Sprite.sprite("enemigo.png");
 
 
     ArrayList<Sprite> arrEnemigos = new ArrayList<>();
@@ -54,13 +56,14 @@ public class capaJuego extends Layer {
     public void listenerJugador(float nada){
         if(comenzo){
             comenzarJuego();
-            super.schedule("PonerEnemigos", 3);
-           super.schedule("SacarEnemigos", 7);
-            super.schedule("GenerarEnemigosGrandes", 15);
-            super.schedule("Niveles", 60);
+            if(!jefe) {
+                super.schedule("PonerEnemigos", 3);
+                super.schedule("SacarEnemigos", 7);
+                super.schedule("GenerarEnemigosGrandes", 15);
+                super.schedule("Niveles", 60);
+            }
             super.schedule("listenerMonedas", 0.1f);
             super.schedule("listenerEnemigos", 0.01f);
-
             unschedule("listenerJugador");
         }
     }
@@ -74,17 +77,31 @@ public class capaJuego extends Layer {
             removeChild(arrEnemigos.get(A),true);
             arrEnemigos.remove(A);
         }
-        if(cont>0)
-        {
-            super.schedule("EnemigosVoladores", 8);
-        }
-        if (cont>1)
-        {
-            super.schedule("EnemigosVoladores2", 8);
-        }
-        if(cont>2)
-        {
-            super.schedule("EnemigosRayo", 5);
+        if(!jefe) {
+            if (cont > 0) {
+                super.schedule("EnemigosVoladores", 8);
+            }
+            if (cont > 1) {
+                super.schedule("EnemigosVoladores2", 8);
+            }
+            if (cont > 2) {
+                super.schedule("EnemigosRayo", 5);
+            }
+            if (cont % 3 == 0) {
+                jefe=true;
+                int contMonJ = contMoneda , contObj= contMoneda + 10;
+                jefeSprite.scale(4);
+                CCPoint posicionImagen = new CCPoint();
+                posicionImagen.x = this.getWidth()/2;
+                posicionImagen.y = this.getHeight()/2;
+                jefeSprite.setPosition(posicionImagen.x,posicionImagen.y);
+                super.addChild(jefeSprite);
+
+                if(contMonJ == contObj){
+                    jefe=false;
+                }
+            }
+
         }
 
     }
@@ -93,10 +110,6 @@ public class capaJuego extends Layer {
         Sprite moneda = Sprite.sprite("moneda.png");
         moneda.setPosition(50, _Pantalla.getHeight() - 70);
         Log.d("JuegoPos", "MonedaCont : posX: " + moneda.getPositionX() + "   posY: " + moneda.getPositionY());
-
-
-
-
         lblContadorDeMonedas  = Label.label("0", "montserrat_semibold.ttf", 50);
         lblContadorDeMonedas.setPosition(moneda.getPositionX() + 50,_Pantalla.getHeight() - 70);
         Log.d("JuegoPos", "LBLcont : posX: " + lblContadorDeMonedas.getPositionX() + "   posY: " + lblContadorDeMonedas.getPositionY());
@@ -135,11 +148,10 @@ public class capaJuego extends Layer {
             img1Derecha = moneda.getPositionX() + moneda.getWidth()/2;
             img1Izquierda = moneda.getPositionX() - moneda.getWidth()/2;
 
-            img2Arriba = arrEnemigos.get(i).getPositionY() + arrEnemigos.get(i).getHeight()/2;
-            img2Abajo = arrEnemigos.get(i).getPositionY() - arrEnemigos.get(i).getHeight()/2;
-            img2Derecha = arrEnemigos.get(i).getPositionX() + arrEnemigos.get(i).getWidth()/2;
-            img2Izquierda = arrEnemigos.get(i).getPositionX() - arrEnemigos.get(i).getWidth()/2;
-
+            img2Arriba = arrEnemigos.get(i).getPositionY() + arrEnemigos.get(i).getHeight();
+            img2Abajo = arrEnemigos.get(i).getPositionY() - arrEnemigos.get(i).getHeight();
+            img2Derecha = arrEnemigos.get(i).getPositionX() + arrEnemigos.get(i).getWidth();
+            img2Izquierda = arrEnemigos.get(i).getPositionX() - arrEnemigos.get(i).getWidth();
 
             if (img1Arriba>=img2Abajo && img1Arriba<=img2Arriba && img1Derecha >= img2Izquierda && img1Derecha <= img2Derecha) {
                 Toco = true;
@@ -185,7 +197,6 @@ public class capaJuego extends Layer {
         }
         return Toco;
     }
-
     boolean verificarTocoMoneda(){
 
         float img1Derecha, img1Izquierda, img1Arriba, img1Abajo;
@@ -258,16 +269,14 @@ public class capaJuego extends Layer {
         super.addChild(_Jugador);
 
     }
-
     public void PonerEnemigos(float inutil){
         Sprite enemigo = Sprite.sprite("enemigo.png");
-
         Random generadorDeAzar = new Random();
         CCPoint posicionImagen = new CCPoint();
-
         posicionImagen.x = generadorDeAzar.nextInt((int) (_Pantalla.width - enemigo.getWidth()));
         posicionImagen.x += enemigo.getWidth() / 2;
-        posicionImagen.y = generadorDeAzar.nextInt((int) (_Pantalla.height - 70));
+        posicionImagen.y = generadorDeAzar.nextInt((int) (_Pantalla.height - 120));
+        posicionImagen.y += enemigo.getHeight();
         enemigo.setPosition(posicionImagen.x, posicionImagen.y);
 
         arrEnemigos.add(enemigo);
@@ -283,8 +292,9 @@ public class capaJuego extends Layer {
         Random generadorDeAzar = new Random();
         CCPoint posicionImagen = new CCPoint();
         posicionImagen.x = generadorDeAzar.nextInt((int) (_Pantalla.width - enemigo.getWidth()));
-        posicionImagen.x += enemigo.getWidth() / 2;
-        posicionImagen.y = generadorDeAzar.nextInt((int) (_Pantalla.height - 70));
+        posicionImagen.x += enemigo.getWidth()*2;
+        posicionImagen.y = generadorDeAzar.nextInt((int) (_Pantalla.height - 250));
+        posicionImagen.y += enemigo.getHeight()*2;
         enemigo.setPosition(posicionImagen.x, posicionImagen.y);
         arrEnemigos.add(enemigo);
         super.addChild(enemigo);
