@@ -1,15 +1,8 @@
 package com.example.tp8;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
-
 import org.cocos2d.layers.Layer;
-import org.cocos2d.menus.Menu;
-import org.cocos2d.menus.MenuItemImage;
 import org.cocos2d.nodes.Label;
 import org.cocos2d.nodes.Sprite;
 import org.cocos2d.types.CCColor3B;

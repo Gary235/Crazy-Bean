@@ -1,15 +1,12 @@
 package com.example.tp8;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.util.Log;
 
-import org.cocos2d.layers.Layer;
 import org.cocos2d.nodes.Director;
 import org.cocos2d.nodes.Scene;
 import org.cocos2d.opengl.CCGLSurfaceView;
-import org.cocos2d.types.CCColor3B;
 import org.cocos2d.types.CCSize;
 
 import java.io.IOException;
