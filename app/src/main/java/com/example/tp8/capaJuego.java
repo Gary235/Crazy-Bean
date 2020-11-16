@@ -33,7 +33,7 @@ public class capaJuego extends Layer {
     public static int acumTimer = 0, contMoneda = -1;
     Sprite moneda = Sprite.sprite("moneda.png");
     Boolean jefe = false;
-    Sprite jefeSprite = Sprite.sprite("enemigo.png");
+    Sprite jefeSprite = Sprite.sprite("jefe.png");
     Context miContexto;
 
     ArrayList<Sprite> arrEnemigos = new ArrayList<>();
@@ -57,7 +57,6 @@ public class capaJuego extends Layer {
          this._Pantalla = _Pantalla;
          setIsTouchEnabled(true);
          blanco = new CCColor3B(255,255,255);
-
          PonerJugador();
          PonerTimer();
          PonerContadordeMonedas();
@@ -66,10 +65,32 @@ public class capaJuego extends Layer {
 
 
     public void listenerJugador(float nada){
-        if(comenzo){
+        if(comenzo) {
             comenzarJuego();
+            jefe = true;
+            jefeSprite.scale(3);
+            CCPoint posicionImagen = new CCPoint();
+            posicionImagen.x = this.getWidth() / 2;
+            posicionImagen.y = this.getHeight() / 2;
+            jefeSprite.setPosition(posicionImagen.x, posicionImagen.y);
+            super.addChild(jefeSprite, 5);
+
+            Sprite enemigo = Sprite.sprite("enemigo.png");
+            CCPoint posicionImagen2 = new CCPoint();
+            posicionImagen2.x = this.getWidth() / 2;
+            posicionImagen2.y = this.getHeight() / 2 - jefeSprite.getHeight()*2;
+            enemigo.setPosition(posicionImagen2.x, posicionImagen2.y);
+            super.addChild(enemigo);
+
+
+            super.schedule("misiles", 3);
+
+
+
+            super.schedule("PonerEnemigos", 2);
+
             if(!jefe) {
-                super.schedule("PonerEnemigos", 3);
+
                 super.schedule("SacarEnemigos", 7);
                 super.schedule("GenerarEnemigosGrandes", 15);
                 super.schedule("Niveles", 60);
@@ -81,8 +102,7 @@ public class capaJuego extends Layer {
     }
 
 
-    public void Niveles(float inutil)
-    {
+    public void Niveles(float inutil) {
         cont++;
         int A=0;
         while(A!=arrEnemigos.size()){
@@ -154,11 +174,13 @@ public class capaJuego extends Layer {
         float img1Derecha, img1Izquierda, img1Arriba, img1Abajo;
         float img2Derecha, img2Izquierda, img2Arriba, img2Abajo;
         int i = 0;
+        img1Arriba = moneda.getPositionY() + moneda.getHeight()/2;
+        img1Abajo = moneda.getPositionY() - moneda.getHeight()/2;
+        img1Derecha = moneda.getPositionX() + moneda.getWidth()/2;
+        img1Izquierda = moneda.getPositionX() - moneda.getWidth()/2;
+
         while (!tocoEnemigo && i < arrEnemigos.size()){
-            img1Arriba = moneda.getPositionY() + moneda.getHeight()/2;
-            img1Abajo = moneda.getPositionY() - moneda.getHeight()/2;
-            img1Derecha = moneda.getPositionX() + moneda.getWidth()/2;
-            img1Izquierda = moneda.getPositionX() - moneda.getWidth()/2;
+
 
             img2Arriba = arrEnemigos.get(i).getPositionY() + arrEnemigos.get(i).getHeight();
             img2Abajo = arrEnemigos.get(i).getPositionY() - arrEnemigos.get(i).getHeight();
@@ -206,6 +228,51 @@ public class capaJuego extends Layer {
             }
 
             i++;
+        }
+        if(jefe) {
+            img2Arriba =jefeSprite.getPositionY() + jefeSprite.getHeight()*3;
+            img2Abajo = jefeSprite.getPositionY() - jefeSprite.getHeight()*3;
+            img2Derecha = jefeSprite.getPositionX() + jefeSprite.getWidth()*3;
+            img2Izquierda = jefeSprite.getPositionX() - jefeSprite.getWidth()*3;
+            if (img1Arriba>=img2Abajo && img1Arriba<=img2Arriba && img1Derecha >= img2Izquierda && img1Derecha <= img2Derecha) {
+                Toco = true;
+                Log.d("IntEntSprites", "Intersección caso 1");
+            }
+
+            if (img1Arriba >= img2Abajo && img1Arriba <= img2Arriba && img1Izquierda >= img2Izquierda && img1Izquierda <= img2Derecha) {
+                Toco = true;
+                Log.d("IntEntSprites", "Intersección caso 2");
+            }
+
+            if (img1Abajo >= img2Abajo && img1Abajo <= img2Arriba && img1Derecha >= img2Izquierda && img1Derecha <= img2Derecha) {
+                Toco = true;
+                Log.d("IntEntSprites", "Intersección caso 3");
+            }
+
+            if (img1Abajo >= img2Abajo && img1Abajo <= img2Arriba && img1Izquierda >= img2Izquierda && img1Izquierda <= img2Derecha) {
+                Toco = true;
+                Log.d("IntEntSprites", "Intersección caso 4");
+            }
+
+            if (img2Arriba >= img1Abajo && img2Arriba <= img1Arriba && img2Derecha >= img1Izquierda && img2Derecha <= img1Derecha) {
+                Toco = true;
+                Log.d("IntEntSprites", "Intersección caso 5");
+            }
+
+            if (img2Arriba >= img1Abajo && img2Arriba <= img1Arriba && img2Izquierda >= img1Izquierda && img2Izquierda <= img1Derecha) {
+                Toco = true;
+                Log.d("IntEntSprites", "Intersección caso 6");
+            }
+
+            if (img2Abajo >= img1Abajo && img2Abajo <= img1Arriba && img2Derecha >= img1Izquierda && img2Derecha <= img1Derecha) {
+                Toco = true;
+                Log.d("IntEntSprites", "Intersección caso 7");
+            }
+
+            if (img2Abajo >= img1Abajo && img2Abajo <= img1Arriba && img2Izquierda >= img1Izquierda && img2Izquierda <= img1Derecha) {
+                Toco = true;
+                Log.d("IntEntSprites", "Intersección caso 8");
+            }
         }
         return Toco;
     }
@@ -281,6 +348,7 @@ public class capaJuego extends Layer {
         super.addChild(_Jugador);
 
     }
+
     public void PonerEnemigos(float inutil){
         Sprite enemigo = Sprite.sprite("enemigo.png");
         Random generadorDeAzar = new Random();
@@ -311,8 +379,6 @@ public class capaJuego extends Layer {
         arrEnemigos.add(enemigo);
         super.addChild(enemigo);
     }
-
-
     public void EnemigosVoladores(float inutil){
         Log.d("Vuela", "EnemigosVoladores: ");
         Sprite enemigo = Sprite.sprite("enemigo.png");
@@ -420,17 +486,41 @@ public class capaJuego extends Layer {
 
 
     }
+    public void misiles (float inutil){
+        Sprite enemigo = Sprite.sprite("enemigo.png");
+        CCPoint posicionImagen = new CCPoint();
+        Random generadorDeAzar = new Random();
+        int num = generadorDeAzar.nextInt(4);
+        MoveTo lugar = MoveTo.action(3,0,0);
+        posicionImagen.x = this.getWidth() / 2;
+        posicionImagen.y = this.getHeight() / 2;
+        enemigo.setPosition(posicionImagen.x, posicionImagen.y);
+        if(num==0){
+            lugar= MoveTo.action(3,posicionImagen.x,-60);
+        } else if(num==1)
+        {
+            lugar= MoveTo.action(3,posicionImagen.x,this.getHeight() + 60);
+        } else if(num==2)
+        {
+            lugar= MoveTo.action(3,-60,posicionImagen.y);
+        } else if(num==3)
+        {
+            lugar= MoveTo.action(3,this.getWidth() + 60,posicionImagen.y);
+        }
+        super.addChild(enemigo);
+        enemigo.runAction(lugar);
+
+    }
 
     boolean verificarTocoEnemigo(){
         float img1Derecha, img1Izquierda, img1Arriba, img1Abajo;
         float img2Derecha, img2Izquierda, img2Arriba, img2Abajo;
         int i = 0;
+        img1Arriba = _Jugador.getPositionY() + _Jugador.getHeight()/2;
+        img1Abajo = _Jugador.getPositionY() - _Jugador.getHeight()/2;
+        img1Derecha = _Jugador.getPositionX() + _Jugador.getWidth()/2;
+        img1Izquierda = _Jugador.getPositionX() - _Jugador.getWidth()/2;
         while (!tocoEnemigo && i < arrEnemigos.size()){
-            img1Arriba = _Jugador.getPositionY() + _Jugador.getHeight()/2;
-            img1Abajo = _Jugador.getPositionY() - _Jugador.getHeight()/2;
-            img1Derecha = _Jugador.getPositionX() + _Jugador.getWidth()/2;
-            img1Izquierda = _Jugador.getPositionX() - _Jugador.getWidth()/2;
-
             img2Arriba = arrEnemigos.get(i).getPositionY() + arrEnemigos.get(i).getHeight()/2;
             img2Abajo = arrEnemigos.get(i).getPositionY() - arrEnemigos.get(i).getHeight()/2;
             img2Derecha = arrEnemigos.get(i).getPositionX() + arrEnemigos.get(i).getWidth()/2;
@@ -519,6 +609,52 @@ public class capaJuego extends Layer {
                 }
             }
             i++;
+        }
+        if(jefe){
+            img2Arriba = jefeSprite.getPositionY() + jefeSprite.getHeight() ;
+            img2Abajo = jefeSprite.getPositionY() - jefeSprite.getHeight() ;
+            img2Derecha = jefeSprite.getPositionX() + jefeSprite.getWidth() ;
+            img2Izquierda = jefeSprite.getPositionX() - jefeSprite.getWidth() ;
+
+            if (img1Arriba >= img2Abajo && img1Arriba <= img2Arriba && img1Derecha >= img2Izquierda && img1Derecha <= img2Derecha) {
+                tocoEnemigo = true;
+                Log.d("IntEntSprites", "Intersección caso 1");
+            }
+
+            if (img1Arriba >= img2Abajo && img1Arriba <= img2Arriba && img1Izquierda >= img2Izquierda && img1Izquierda <= img2Derecha) {
+                tocoEnemigo = true;
+                Log.d("IntEntSprites", "Intersección caso 2");
+            }
+
+            if (img1Abajo >= img2Abajo && img1Abajo <= img2Arriba && img1Derecha >= img2Izquierda && img1Derecha <= img2Derecha) {
+                tocoEnemigo = true;
+                Log.d("IntEntSprites", "Intersección caso 3");
+            }
+
+            if (img1Abajo >= img2Abajo && img1Abajo <= img2Arriba && img1Izquierda >= img2Izquierda && img1Izquierda <= img2Derecha) {
+                tocoEnemigo = true;
+                Log.d("IntEntSprites", "Intersección caso 4");
+            }
+
+            if (img2Arriba >= img1Abajo && img2Arriba <= img1Arriba && img2Derecha >= img1Izquierda && img2Derecha <= img1Derecha) {
+                tocoEnemigo = true;
+                Log.d("IntEntSprites", "Intersección caso 5");
+            }
+
+            if (img2Arriba >= img1Abajo && img2Arriba <= img1Arriba && img2Izquierda >= img1Izquierda && img2Izquierda <= img1Derecha) {
+                tocoEnemigo = true;
+                Log.d("IntEntSprites", "Intersección caso 6");
+            }
+
+            if (img2Abajo >= img1Abajo && img2Abajo <= img1Arriba && img2Derecha >= img1Izquierda && img2Derecha <= img1Derecha) {
+                tocoEnemigo = true;
+                Log.d("IntEntSprites", "Intersección caso 7");
+            }
+
+            if (img2Abajo >= img1Abajo && img2Abajo <= img1Arriba && img2Izquierda >= img1Izquierda && img2Izquierda <= img1Derecha) {
+                tocoEnemigo = true;
+                Log.d("IntEntSprites", "Intersección caso 8");
+            }
         }
         return tocoEnemigo;
     }
