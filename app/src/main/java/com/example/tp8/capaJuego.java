@@ -30,11 +30,12 @@ public class capaJuego extends Layer {
     Label lblTimer, lblContadorDeMonedas;
     CCColor3B blanco;
     int cont=0;
-    public static int acumTimer = 0, contMoneda = -1;
+    public static int acumTimer = 0, contMoneda = -1, objetivo;
     Sprite moneda = Sprite.sprite("moneda.png");
     Boolean jefe = false;
     Sprite jefeSprite = Sprite.sprite("jefe.png");
     Context miContexto;
+
 
     ArrayList<Sprite> arrEnemigos = new ArrayList<>();
     boolean comenzo = false, tocoMoneda = false, tocoEnemigo = false;
@@ -67,34 +68,13 @@ public class capaJuego extends Layer {
     public void listenerJugador(float nada){
         if(comenzo) {
             comenzarJuego();
-            jefe = true;
-            jefeSprite.scale(3);
-            CCPoint posicionImagen = new CCPoint();
-            posicionImagen.x = this.getWidth() / 2;
-            posicionImagen.y = this.getHeight() / 2;
-            jefeSprite.setPosition(posicionImagen.x, posicionImagen.y);
-            super.addChild(jefeSprite, 5);
-
-            Sprite enemigo = Sprite.sprite("enemigo.png");
-            CCPoint posicionImagen2 = new CCPoint();
-            posicionImagen2.x = this.getWidth() / 2;
-            posicionImagen2.y = this.getHeight() / 2 - jefeSprite.getHeight()*2;
-            enemigo.setPosition(posicionImagen2.x, posicionImagen2.y);
-            super.addChild(enemigo);
 
 
-            super.schedule("misiles", 3);
+            super.schedule("PonerEnemigos", 3);
+            super.schedule("SacarEnemigos", 7);
+            super.schedule("GenerarEnemigosGrandes", 15);
+            super.schedule("Niveles", 20);
 
-
-
-            super.schedule("PonerEnemigos", 2);
-
-            if(!jefe) {
-
-                super.schedule("SacarEnemigos", 7);
-                super.schedule("GenerarEnemigosGrandes", 15);
-                super.schedule("Niveles", 60);
-            }
             super.schedule("listenerMonedas", 0.1f);
             super.schedule("listenerEnemigos", 0.01f);
             unschedule("listenerJugador");
@@ -103,40 +83,50 @@ public class capaJuego extends Layer {
 
 
     public void Niveles(float inutil) {
-        cont++;
+        if(!jefe)
+        {cont++;
+        }
         int A=0;
         while(A!=arrEnemigos.size()){
             removeChild(arrEnemigos.get(A),true);
             arrEnemigos.remove(A);
         }
-        if(!jefe) {
+
             if (cont > 0) {
-                //super.schedule("EnemigosVoladores", 8);
+                super.schedule("EnemigosVoladores", 8);
             }
             if (cont > 1) {
-                //super.schedule("EnemigosVoladores2", 8);
+                super.schedule("EnemigosVoladores2", 8);
             }
             if (cont > 2) {
-                //super.schedule("EnemigosRayo", 5);
+                super.schedule("EnemigosRayo", 5);
             }
+            if(!jefe){
             if (cont % 3 == 0) {
-                jefe=true;
-                int contMonJ = contMoneda , contObj= contMoneda + 10;
-                jefeSprite.scale(4);
+                jefe = true;
+                jefeSprite.scale(3);
                 CCPoint posicionImagen = new CCPoint();
-                posicionImagen.x = this.getWidth()/2;
-                posicionImagen.y = this.getHeight()/2;
-                jefeSprite.setPosition(posicionImagen.x,posicionImagen.y);
-                super.addChild(jefeSprite);
+                posicionImagen.x = this.getWidth() / 2;
+                posicionImagen.y = this.getHeight() / 2;
+                jefeSprite.setPosition(posicionImagen.x, posicionImagen.y);
+                super.addChild(jefeSprite, 5);
+                objetivo = contMoneda+1;
 
-                if(contMonJ == contObj){
-                    jefe=false;
-                }
+                /*Sprite enemigo = Sprite.sprite("enemigo.png");
+                CCPoint posicionImagen2 = new CCPoint();
+                posicionImagen2.x = this.getWidth() / 2;
+                posicionImagen2.y = this.getHeight() / 2 - jefeSprite.getHeight()*2;
+                enemigo.setPosition(posicionImagen2.x, posicionImagen2.y);
+                super.addChild(enemigo);*/
+
+
+                super.schedule("misiles", 3);
             }
+            }
+
 
         }
 
-    }
 
     void PonerContadordeMonedas(){
         Sprite moneda = Sprite.sprite("moneda.png");
@@ -332,7 +322,17 @@ public class capaJuego extends Layer {
             Log.d("IntEntSprites", "Intersección caso 8");
         }
 
-
+        if(jefe){
+            int A=0;
+            if(contMoneda == objetivo){
+                removeChild(jefeSprite,true);
+                while(A!=arrEnemigos.size()){
+                    removeChild(arrEnemigos.get(A),true);
+                    arrEnemigos.remove(A);
+                }
+                jefe=false;
+            }
+        }
         return tocoMoneda;
     }
     void PonerJugador(){
@@ -363,10 +363,13 @@ public class capaJuego extends Layer {
         super.addChild(enemigo);
     }
     public void SacarEnemigos (float inutil) {
-        removeChild(arrEnemigos.get(0),true);
-        arrEnemigos.remove(0);
+        if(!jefe){
+            removeChild(arrEnemigos.get(0),true);
+            arrEnemigos.remove(0);
+        }
+
     }
-    public void GenerarEnemigosGrandes(float inutil){
+    public void GenerarEnemigosGrandes(float inutil){ if(!jefe){
         Sprite enemigo = Sprite.sprite("enemigo.png");
         enemigo.scale(2);
         Random generadorDeAzar = new Random();
@@ -378,8 +381,10 @@ public class capaJuego extends Layer {
         enemigo.setPosition(posicionImagen.x, posicionImagen.y);
         arrEnemigos.add(enemigo);
         super.addChild(enemigo);
+        }
     }
     public void EnemigosVoladores(float inutil){
+        if(!jefe){
         Log.d("Vuela", "EnemigosVoladores: ");
         Sprite enemigo = Sprite.sprite("enemigo.png");
         int num;
@@ -410,9 +415,11 @@ public class capaJuego extends Layer {
         izquierda= MoveTo.action(5,(enemigo.getWidth()+ 100),posicionImagen.y);
         secuencia = Sequence.actions(derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda,derecha,izquierda);
         enemigo.runAction(secuencia);
+        }
 
     }
     public void EnemigosVoladores2(float inutil){
+        if(!jefe){
         Log.d("Vuela", "EnemigosVoladores2: ");
         Sprite enemigo = Sprite.sprite("enemigo.png");
         int num;
@@ -442,9 +449,11 @@ public class capaJuego extends Layer {
         abajo= MoveTo.action(10,posicionImagen.x,enemigo.getHeight()+ 100);
         secuencia = Sequence.actions(arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo,arriba,abajo);
         enemigo.runAction(secuencia);
+        }
 
     }
     public void EnemigosRayo(float inutil){
+        if(!jefe){
         Log.d("Vuela", "EnemigosVoladores2: ");
         Sprite enemigo = Sprite.sprite("enemigo.png");
         int num;
@@ -483,10 +492,11 @@ public class capaJuego extends Layer {
         super.addChild(enemigo);
         secuencia = Sequence.actions(ir);
         enemigo.runAction(secuencia);
-
+        }
 
     }
     public void misiles (float inutil){
+        if(jefe){
         Sprite enemigo = Sprite.sprite("enemigo.png");
         CCPoint posicionImagen = new CCPoint();
         Random generadorDeAzar = new Random();
@@ -508,10 +518,10 @@ public class capaJuego extends Layer {
             lugar= MoveTo.action(3,this.getWidth() + 60,posicionImagen.y);
         }
         super.addChild(enemigo);
+        arrEnemigos.add(enemigo);
         enemigo.runAction(lugar);
-
+        }
     }
-
     boolean verificarTocoEnemigo(){
         float img1Derecha, img1Izquierda, img1Arriba, img1Abajo;
         float img2Derecha, img2Izquierda, img2Arriba, img2Abajo;
