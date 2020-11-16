@@ -1,5 +1,6 @@
 package com.example.tp8;
 
+import android.content.Context;
 import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -33,23 +34,34 @@ public class capaJuego extends Layer {
     Sprite moneda = Sprite.sprite("moneda.png");
     Boolean jefe = false;
     Sprite jefeSprite = Sprite.sprite("enemigo.png");
-
+    Context miContexto;
 
     ArrayList<Sprite> arrEnemigos = new ArrayList<>();
     boolean comenzo = false, tocoMoneda = false, tocoEnemigo = false;
 
-    public capaJuego(CCSize _Pantalla) {
+    int arrayMusica[] = {
+            raw.musica0,
+            raw.musica1,
+            raw.musica2,
+            raw.musica3,
+            raw.musica4,
+            raw.musica5,
+            raw.musica6
+    };
+
+    public capaJuego(CCSize _Pantalla,Context context) {
          acumTimer = 0; contMoneda = -1;
          comenzo = false; tocoMoneda = false; tocoEnemigo = false;
 
-        this._Pantalla = _Pantalla;
-        setIsTouchEnabled(true);
-        blanco = new CCColor3B(255,255,255);
+         this.miContexto = context;
+         this._Pantalla = _Pantalla;
+         setIsTouchEnabled(true);
+         blanco = new CCColor3B(255,255,255);
 
-        PonerJugador();
-        PonerTimer();
-        PonerContadordeMonedas();
-        super.schedule("listenerJugador", 0.01f);
+         PonerJugador();
+         PonerTimer();
+         PonerContadordeMonedas();
+         super.schedule("listenerJugador", 0.01f);
     }
 
 
@@ -79,13 +91,13 @@ public class capaJuego extends Layer {
         }
         if(!jefe) {
             if (cont > 0) {
-                super.schedule("EnemigosVoladores", 8);
+                //super.schedule("EnemigosVoladores", 8);
             }
             if (cont > 1) {
-                super.schedule("EnemigosVoladores2", 8);
+                //super.schedule("EnemigosVoladores2", 8);
             }
             if (cont > 2) {
-                super.schedule("EnemigosRayo", 5);
+                //super.schedule("EnemigosRayo", 5);
             }
             if (cont % 3 == 0) {
                 jefe=true;
@@ -115,8 +127,8 @@ public class capaJuego extends Layer {
         Log.d("JuegoPos", "LBLcont : posX: " + lblContadorDeMonedas.getPositionX() + "   posY: " + lblContadorDeMonedas.getPositionY());
         lblContadorDeMonedas.setColor(blanco);
 
-        super.addChild(moneda);
-        super.addChild(lblContadorDeMonedas);
+        super.addChild(moneda, 5);
+        super.addChild(lblContadorDeMonedas, 5);
     }
     public void listenerMonedas(float inutil){
 
@@ -138,7 +150,7 @@ public class capaJuego extends Layer {
         }
     }
     boolean choqueMonedaEnemigo() {
-        Boolean Toco= false;
+        boolean Toco= false;
         float img1Derecha, img1Izquierda, img1Arriba, img1Abajo;
         float img2Derecha, img2Izquierda, img2Arriba, img2Abajo;
         int i = 0;
@@ -283,7 +295,7 @@ public class capaJuego extends Layer {
         super.addChild(enemigo);
     }
     public void SacarEnemigos (float inutil) {
-        removeChild(  arrEnemigos.get(0),true);
+        removeChild(arrEnemigos.get(0),true);
         arrEnemigos.remove(0);
     }
     public void GenerarEnemigosGrandes(float inutil){
@@ -299,17 +311,19 @@ public class capaJuego extends Layer {
         arrEnemigos.add(enemigo);
         super.addChild(enemigo);
     }
+
+
     public void EnemigosVoladores(float inutil){
         Log.d("Vuela", "EnemigosVoladores: ");
         Sprite enemigo = Sprite.sprite("enemigo.png");
         int num;
-        IntervalAction secuencia = null;
+        IntervalAction secuencia;
         MoveTo derecha,izquierda;
         Random generadorDeAzar = new Random();
         CCPoint posicionImagen = new CCPoint();
         posicionImagen.x = generadorDeAzar.nextInt((int) (_Pantalla.width - enemigo.getWidth()));
         posicionImagen.x += enemigo.getWidth() / 2;
-        num = generadorDeAzar.nextInt((int) (3));
+        num = generadorDeAzar.nextInt(3);
         if(num==0)
         {
             posicionImagen.y = _Pantalla.height - (_Pantalla.height/2);
@@ -336,12 +350,12 @@ public class capaJuego extends Layer {
         Log.d("Vuela", "EnemigosVoladores2: ");
         Sprite enemigo = Sprite.sprite("enemigo.png");
         int num;
-        IntervalAction secuencia = null;
+        IntervalAction secuencia;
         MoveTo arriba,abajo;
         Random generadorDeAzar = new Random();
         CCPoint posicionImagen = new CCPoint();
         posicionImagen.y = generadorDeAzar.nextInt((int) (_Pantalla.height - 100));
-        num = generadorDeAzar.nextInt((int) (3));
+        num = generadorDeAzar.nextInt(3);
         if(num==0)
         {
             posicionImagen.x = _Pantalla.width - (_Pantalla.width/2);
@@ -368,12 +382,12 @@ public class capaJuego extends Layer {
         Log.d("Vuela", "EnemigosVoladores2: ");
         Sprite enemigo = Sprite.sprite("enemigo.png");
         int num;
-        IntervalAction secuencia = null;
+        IntervalAction secuencia;
         MoveTo ir = null;
         Random generadorDeAzar = new Random();
         CCPoint posicionImagen = new CCPoint();
 
-        num = generadorDeAzar.nextInt((int) (4));
+        num = generadorDeAzar.nextInt(4);
         if(num==0)
         {
             posicionImagen.x = enemigo.getWidth() + 80;
@@ -516,14 +530,13 @@ public class capaJuego extends Layer {
         }
     }
 
-
     void PonerTimer(){
         lblTimer  = Label.label("0s", "montserrat_semibold.ttf", 50);
         lblTimer.setPosition(_Pantalla.getWidth() - (lblTimer.getWidth()/2 + 40),_Pantalla.getHeight() - 70);
         Log.d("JuegoPos", "Timer: posX: " + lblTimer.getPositionX() + "   posY: " + lblTimer.getPositionY());
         lblTimer.setColor(blanco);
 
-        super.addChild(lblTimer);
+        super.addChild(lblTimer, 5);
 
     }
     public void actualizarTimer(float inutilidad){
@@ -531,9 +544,33 @@ public class capaJuego extends Layer {
         acumTimer ++ ;
     }
 
+    void ElegirMusica(){
+        Random generador = new Random();
+        int eleccion = generador.nextInt(7);
+
+        try {
+            Juego.MusicadeFondo = MediaPlayer.create(miContexto, arrayMusica[eleccion]);
+            // Before playing, determine if playerMusic is occupied, so that no error will be reported.
+            if (Juego.MusicadeFondo != null) {
+                Juego.MusicadeFondo.stop();
+            }
+            Juego.MusicadeFondo.prepare();
+            Juego.MusicadeFondo.start();
+            Juego.MusicadeFondo.setLooping(true);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
     void comenzarJuego(){
-        try { Juego.MusicadeFondo.prepare(); } catch (IOException e) { e.printStackTrace(); }
-        Juego.MusicadeFondo.start();
+        ElegirMusica();
+
+
+
         super.schedule("actualizarTimer", 1);
     }
     void MoverJugador(float x, float y){
@@ -595,5 +632,8 @@ public class capaJuego extends Layer {
         unschedule("listenerMonedas");
         unschedule("listenerEnemigos");
         Juego.escenaGameOver();
+        Juego.MusicadeFondo.stop();
+        Juego.MusicadeFondo.release();
+
     }
 }

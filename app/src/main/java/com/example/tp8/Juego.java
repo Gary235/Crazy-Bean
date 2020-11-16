@@ -12,6 +12,8 @@ import org.cocos2d.opengl.CCGLSurfaceView;
 import org.cocos2d.types.CCColor3B;
 import org.cocos2d.types.CCSize;
 
+import java.io.IOException;
+
 public class Juego {
 
     static Context miContexto;
@@ -29,9 +31,7 @@ public class Juego {
         Log.d("Juego", "Empezo");
         Director.sharedDirector().attachInView(_Vista);
         _Pantalla = Director.sharedDirector().displaySize();
-        MusicadeFondo = new MediaPlayer();
-        MusicadeFondo = MediaPlayer.create(miContexto, R.raw.nyan_cat);
-        MusicadeFondo.setLooping(true);
+        Juego.MusicadeFondo = new MediaPlayer();
 
         escenaComienzo();
 
@@ -42,12 +42,13 @@ public class Juego {
 
         escena.addChild(capaComienzo);
         Director.sharedDirector().runWithScene(escena);
+
     }
 
 
     public static void escenaJuego() {
         Scene escena = Scene.node();
-        capaJuego capaJuego = new capaJuego(_Pantalla);
+        capaJuego capaJuego = new capaJuego(_Pantalla, miContexto);
         escena.addChild(capaJuego);
         Director.sharedDirector().replaceScene(escena);
     }

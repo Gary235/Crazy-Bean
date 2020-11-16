@@ -134,8 +134,8 @@ public class capaGameOver extends Layer {
         }
     }
 
-        @Override
-        public boolean ccTouchesBegan(MotionEvent event) {
+    @Override
+    public boolean ccTouchesBegan(MotionEvent event) {
             float x,y;
             x = event.getX();
             y = _Pantalla.getHeight() - event.getY();
@@ -148,7 +148,7 @@ public class capaGameOver extends Layer {
             return true;
         }
 
-        boolean DetectarClick(float x, float y){
+    boolean DetectarClick(float x, float y){
 
             float img1Derecha, img1Izquierda, img1Arriba, img1Abajo;
 
