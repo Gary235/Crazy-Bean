@@ -32,7 +32,7 @@ public class capaJuego extends Layer {
     int cont=0;
     public static int acumTimer = 0, contMoneda = -1, objetivo;
     Sprite moneda = Sprite.sprite("moneda.png");
-    Boolean jefe = false;
+    Boolean jefe = false, difJef=false;
     Sprite jefeSprite = Sprite.sprite("jefe.png");
     Context miContexto;
 
@@ -68,13 +68,10 @@ public class capaJuego extends Layer {
     public void listenerJugador(float nada){
         if(comenzo) {
             comenzarJuego();
-
-
             super.schedule("PonerEnemigos", 3);
             super.schedule("SacarEnemigos", 7);
             super.schedule("GenerarEnemigosGrandes", 15);
             super.schedule("Niveles", 20);
-
             super.schedule("listenerMonedas", 0.1f);
             super.schedule("listenerEnemigos", 0.01f);
             unschedule("listenerJugador");
@@ -120,7 +117,14 @@ public class capaJuego extends Layer {
                 super.addChild(enemigo);*/
 
 
-                super.schedule("misiles", 3);
+                    super.schedule("misiles", 3);
+
+                    super.schedule("misilesRebotan", 3);
+
+
+
+
+
             }
             }
 
@@ -324,7 +328,12 @@ public class capaJuego extends Layer {
 
         if(jefe){
             int A=0;
+
             if(contMoneda == objetivo){
+                if(!difJef)
+                {
+                    difJef=true;
+                }
                 removeChild(jefeSprite,true);
                 while(A!=arrEnemigos.size()){
                     removeChild(arrEnemigos.get(A),true);
@@ -348,7 +357,6 @@ public class capaJuego extends Layer {
         super.addChild(_Jugador);
 
     }
-
     public void PonerEnemigos(float inutil){
         Sprite enemigo = Sprite.sprite("enemigo.png");
         Random generadorDeAzar = new Random();
@@ -497,30 +505,83 @@ public class capaJuego extends Layer {
     }
     public void misiles (float inutil){
         if(jefe){
+            if(!difJef) {
+                Sprite enemigo = Sprite.sprite("enemigo.png");
+                CCPoint posicionImagen = new CCPoint();
+                Random generadorDeAzar = new Random();
+                int num = generadorDeAzar.nextInt(4);
+                MoveTo lugar = MoveTo.action(3, 0, 0);
+                posicionImagen.x = this.getWidth() / 2;
+                posicionImagen.y = this.getHeight() / 2;
+                enemigo.setPosition(posicionImagen.x, posicionImagen.y);
+                if (num == 0) {
+                    lugar = MoveTo.action(3, posicionImagen.x, -60);
+                } else if (num == 1) {
+                    lugar = MoveTo.action(3, posicionImagen.x, this.getHeight() + 60);
+                } else if (num == 2) {
+                    lugar = MoveTo.action(3, -60, posicionImagen.y);
+                } else if (num == 3) {
+                    lugar = MoveTo.action(3, this.getWidth() + 60, posicionImagen.y);
+                }
+                super.addChild(enemigo);
+                arrEnemigos.add(enemigo);
+                enemigo.runAction(lugar);
+            }
+        }
+    }
+    public void misilesRebotan (float inutil){
+        if(jefe){
+            if(difJef){
+            Sprite enemigo = Sprite.sprite("enemigo.png");
+            CCPoint posicionImagen = new CCPoint();
+            IntervalAction secuencia;
+            posicionImagen.x = this.getWidth() / 2;
+            posicionImagen.y = this.getHeight() / 2;
+            enemigo.setPosition(posicionImagen.x, posicionImagen.y);
+            super.addChild(enemigo);
+            arrEnemigos.add(enemigo);
+            secuencia = Sequence.actions(mover(),mover(),mover(),mover(),mover(),mover(),mover(),mover(),mover(),mover(),mover(),mover(),mover(),mover(),mover(),mover(),mover(),mover(),mover(),mover(),mover(),mover(),mover(),mover(),mover(),mover(),mover(),mover());
+            enemigo.runAction(secuencia);
+            }
+        }
+    }
+    public MoveTo mover(){
         Sprite enemigo = Sprite.sprite("enemigo.png");
-        CCPoint posicionImagen = new CCPoint();
+        MoveTo lugar = MoveTo.action(3,0,0);
         Random generadorDeAzar = new Random();
         int num = generadorDeAzar.nextInt(4);
-        MoveTo lugar = MoveTo.action(3,0,0);
-        posicionImagen.x = this.getWidth() / 2;
-        posicionImagen.y = this.getHeight() / 2;
-        enemigo.setPosition(posicionImagen.x, posicionImagen.y);
+
         if(num==0){
-            lugar= MoveTo.action(3,posicionImagen.x,-60);
+            int random;
+            Random randomAzar = new Random();;
+            random = randomAzar.nextInt((int) (_Pantalla.width - enemigo.getWidth()));
+            random += enemigo.getWidth();
+            lugar= MoveTo.action(3,random,enemigo.getHeight());
         } else if(num==1)
         {
-            lugar= MoveTo.action(3,posicionImagen.x,this.getHeight() + 60);
-        } else if(num==2)
-        {
-            lugar= MoveTo.action(3,-60,posicionImagen.y);
-        } else if(num==3)
-        {
-            lugar= MoveTo.action(3,this.getWidth() + 60,posicionImagen.y);
+            int random;
+            Random randomAzar = new Random();;
+            random = randomAzar.nextInt((int) (_Pantalla.height - 120));
+            random += enemigo.getHeight();
+            lugar= MoveTo.action(3,enemigo.getWidth(),random);
         }
-        super.addChild(enemigo);
-        arrEnemigos.add(enemigo);
-        enemigo.runAction(lugar);
+        else if(num==2)
+        {
+            int random;
+            Random randomAzar = new Random();;
+            random = randomAzar.nextInt((int) (_Pantalla.width - enemigo.getWidth()));
+            random += enemigo.getWidth() / 2;
+            lugar= MoveTo.action(3,random,_Pantalla.getHeight()-120);
         }
+        else if (num==3)
+        {
+            int random;
+            Random randomAzar = new Random();;
+            random = randomAzar.nextInt((int) (_Pantalla.height - 120));
+            lugar= MoveTo.action(3,_Pantalla.getWidth()-enemigo.getWidth(),random);
+        }
+
+        return lugar;
     }
     boolean verificarTocoEnemigo(){
         float img1Derecha, img1Izquierda, img1Arriba, img1Abajo;
