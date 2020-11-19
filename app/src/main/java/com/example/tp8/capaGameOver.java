@@ -39,11 +39,11 @@ public class capaGameOver extends Layer {
         CCColor3B color3B;
         color3B = new CCColor3B(255,255,255);
         Label lblTiempoJugado;
-        if(capaJuego.contMoneda > main.cantMonMax)
+        if(capaJuego.contMoneda > main.devolverRecord())
         {
-            main.actualizarAcum(capaJuego.contMoneda);
+            main.guardarRecord(capaJuego.contMoneda);
         }
-        lblTiempoJugado  = Label.label("Record actual es: $" + main.cantMonMax,"montserrat_medium.ttf", 50);
+        lblTiempoJugado  = Label.label("Record actual es: $" + main.devolverRecord(),"montserrat_medium.ttf", 50);
         lblTiempoJugado.setPosition(_Pantalla.getWidth()/2 ,_Pantalla.getHeight()/2 - 200);
         lblTiempoJugado.setColor(color3B);
         super.addChild(lblTiempoJugado);

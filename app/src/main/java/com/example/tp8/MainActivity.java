@@ -2,6 +2,8 @@ package com.example.tp8;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -11,7 +13,8 @@ import org.cocos2d.opengl.CCGLSurfaceView;
 public class MainActivity extends AppCompatActivity {
 
     CCGLSurfaceView vista;
-    int cantMonMax=0;
+    SharedPreferences.Editor myEdit;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,11 +37,21 @@ public class MainActivity extends AppCompatActivity {
         miJuego.ComenzarJuego();
     }
 
+    public void guardarRecord(int record){
+        sharedPreferences = getSharedPreferences("Preferencias", Context.MODE_PRIVATE);
+        myEdit = sharedPreferences.edit();
+        myEdit.putInt("Record",record);
+        myEdit.commit();
 
-    public void actualizarAcum(int x)
-    {
-        cantMonMax=x;
     }
+
+    public int devolverRecord()
+    {
+     sharedPreferences = getSharedPreferences("Preferencias", Context.MODE_PRIVATE);
+     myEdit = sharedPreferences.edit();
+     return sharedPreferences.getInt("Record",0);
+    }
+
 
 
 }
